@@ -1,4 +1,4 @@
 node_modules
-dist
+/dist
 # firebase cofig file
 # ./firebaseConfig
