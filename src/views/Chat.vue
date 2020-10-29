@@ -97,7 +97,6 @@
             handleFilesUpload(){
                 if (this.minimum) {
                     // vet file upload
-                    // console.log(this.$refs.files.files.length);
                     if (this.$refs.files.files.length > 4 || (this.files.length + this.$refs.files.files.length) > 4) {
                         this.message = 'Maximum number of 4 files allowed';
                         this.maximum = true;
@@ -111,13 +110,11 @@
                     }
                 } else {
                     // vet file upload
-                    // console.log(this.$refs.file.files[0].length);
                     if ((this.files.length + 1) > 4) {
                         this.message = 'Maximum number of 4 files allowed';
                         this.maximum = true;
                         return;
                     }
-                    // console.log(this.$refs.file.files[0]);
                     this.files.push(this.$refs.file.files[0]);
                 }
                 // Check if number of uploaded files are less than 3

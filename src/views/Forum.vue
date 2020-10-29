@@ -370,7 +370,6 @@ export default {
 		},
 		// Clear files
 		clearFiles() {
-			console.log('here');
 			this.files = [];
 		},
 		// Add a file
@@ -454,38 +453,35 @@ export default {
 		submitComment() {
 			this.$refs.comment.style.height = '36px';
             if(this.comment != '') {
-                var comment = {
-                    id: Date.now() + '_' + this.user.id,
-                    admin: false,
-                    user: this.user.full_name,
-                    avatar: this.user.avatar,
-					comment: this.comment,
-					files_urls: [],
-                    created_at: Date.now(),
-                    likes: [],
-                    replies: [],
-                };
-				this.comment = '';
-				console.log(comment)
+                // var comment = {
+                //     id: Date.now() + '_' + this.user.id,
+                //     admin: false,
+                //     user: this.user.full_name,
+                //     avatar: this.user.avatar,
+				// 	comment: this.comment,
+				// 	files_urls: [],
+                //     created_at: Date.now(),
+                //     likes: [],
+                //     replies: [],
+                // };
+				// this.comment = '';
             }
 		},
-		submitFiles(val) {
-			console.log(val)
-			// var files_urls = [];
-			if (this.files.length > 0) {
-				// Initialize the form data
-				let formData = new FormData();
-				// Iteate over any file sent over appending the files to the form data.
-				for( var i = 0; i < this.files.length; i++ ){
-					let file = this.files[i];
-					formData.append('files[' + i + ']', file);
-				}
-				// Make the request to the POST /select-files URL
-				this.submitComment();
-			}
-		},
+		// submitFiles(val) {
+		// 	// var files_urls = [];
+		// 	if (this.files.length > 0) {
+		// 		// Initialize the form data
+		// 		let formData = new FormData();
+		// 		// Iteate over any file sent over appending the files to the form data.
+		// 		for( var i = 0; i < this.files.length; i++ ){
+		// 			let file = this.files[i];
+		// 			formData.append('files[' + i + ']', file);
+		// 		}
+		// 		// Make the request to the POST /select-files URL
+		// 		this.submitComment();
+		// 	}
+		// },
 		submitReply(val, index) {
-			// console.log(this.$refs.reply[index]);
 			this.$refs.reply[index].style.height = '36px';
             if(this.reply != '') {
                 let comment = this.comments.find(comment => comment.id === val.id);
