@@ -12,25 +12,14 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // Add service account details
-var serviceAccount = require("./key.json");
+// var serviceAccount = require("./key.json");
 
 // Initialize firebase
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://capsulebackend.firebaseio.com"
-});
-
-// documentRef.update(
-//   'array', Firestore.FieldValue.arrayUnion('foo')
-// ).then(() => {
-//   return documentRef.get();
-// }).then(doc => {
-//   // doc.get('array') contains field 'foo'
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://capsulebackend.firebaseio.com"
 // });
-// admin.firestore().collection('cards').doc('BdSxtZL8V4S576i2BTRs').set({});
-// admin.firestore().collection('cards').doc('BdSxtZL8V4S576i2BTRs').update({
-//   group: admin.firestore.FieldValue.arrayUnion({ back: 'foo', front: 'bar' })
-// })
+
 console.log('Hello')
 
 // Automatically parse request body as through Middlewares
@@ -44,34 +33,18 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json({ type: 'application/*+json' }))
 // app.use(cookieParser());
 
-// Tests routes
-// app.use('/v1/students', require('./routes/api/students'));
-// app.use('/v1/admins', require('./routes/api/admins'));
-// app.use('/v1/schools', require('./routes/api/schools'));
-// app.use('/v1/moderators', require('./routes/api/moderators'));
-// app.use('/v1/accounts', require('./routes/api/accounts'));
-// app.use('/v1/tests', require('./routes/api/tests'));
-// app.use('/v1/notes', require('./routes/api/notes'));
-// app.use('/v1/users', require('./routes/api/users'));
-// app.use('/v1/forums', require('./routes/api/forums'));
+// App routes
 // app.use('/v1/comments', require('./routes/api/comments'));
-// app.use('/v1/lessons', require('./routes/api/lessons'));
-// app.use('/v1/questions', require('./routes/api/questions'));
-
-// app.use(function (err, req, res, next) {
-//   console.log('This is the invalid field ->', err.field)
-//   next(err)
-// })
+// app.use('/v1/groups', require('./routes/api/groups'));
+// app.use('/v1/projects', require('./routes/api/projects'));
+// app.use('/v1/users', require('./routes/api/users'));
+// app.use('/v1/accounts', require('./routes/api/accounts'));
 
 // Set Content-Type for all responses for these routes
 // app.use((req, res, next) => {
 //   res.set('Content-Type', 'application/json');
 //   next();
 // });
-
-// app.get('/', async (req, res) => {
-//   res.render('index');
-// })
 
 // Redirect root to /home
 app.get('/', (req, res) => {
