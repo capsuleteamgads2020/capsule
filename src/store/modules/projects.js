@@ -1,6 +1,6 @@
 'use strict'
 
-import projectsApi from '@/services/projectsApi';
+import firebase from '../../firebaseConfig.js';
 
 const state = {
 	projects: [
@@ -73,9 +73,9 @@ const getters = {
 };
 
 const actions = {
-    async addProject({ commit, rootState }, payload) {
+    async addProject({ commit }, payload) {
 		// api call
-		return projectsApi.addProject(rootState.idToken, {
+		await firebase.firestore().collection('projects').add({
 			name: payload.name,
 			description: payload.description,
 			deadline: payload.deadline,
@@ -95,7 +95,7 @@ const actions = {
 			return err;
 		});
     },
-    async getProject({ state, getters, commit, rootState }, payload) {
+    async getProject({ state, getters, commit }, payload) {
         // filter project then api call
 		if (payload.id == state.project.id) {
 			return state.project
@@ -107,7 +107,7 @@ const actions = {
 			commit('GET_PROJECT', project)
 			return project;
 		} else {
-			return projectsApi.getProject(payload.id, rootState.idToken)
+			await firebase.firestore().collection('projects').doc(payload.id).get()
 			.then(res => {
 				commit('GET_PROJECT', res.data)
 				return res.data;
@@ -117,26 +117,27 @@ const actions = {
 			});
 		}
     },
-    async getProjects({ state, commit, rootState }) {
+    async getProjects({ state, commit }) {
         // api call
 		if (state.projects && state.projects.length > 0) {
 			return state.projects;
 		}
-
-		return projectsApi.getProjects(rootState.idToken)
-		.then(res => {
-			commit('GET_PROJECTS', res.data);
-			return res.data;
-		})
-		.catch( err => {
-			// var message = 'There was a problem fetching events: ' + err.message
-			return err;
+		// realtime firebase connection
+		firebase.firestore().collection('projects').orderBy('created_at', 'desc')
+		.onSnapshot(snapshot => {
+			let projects = []
+		
+			snapshot.forEach(doc => {
+				let project = doc.data()
+				project.id = doc.id
+				projects.push(project)
+			})
+			commit('GET_PROJECTS', projects);
 		});
     },
-    async updateProject({ commit, rootState }, payload) {
-        // api call
-		return projectsApi.updateProject(rootState.idToken, {
-			id: payload.id,
+    async updateProject({ commit }, payload) {
+		// api call
+		await firebase.firestore().collection('projects').doc(payload.id).update({
 			name: payload.name,
 			description: payload.description,
 			deadline: payload.deadline,
@@ -144,28 +145,19 @@ const actions = {
 			contribution: payload.contribution,
 			currency: payload.currency,
 			owner: payload.owner,
-			created_at: payload.created_at,
+			updated_at: payload.updated_at,
 			active: payload.active,
-		})
-		.then(res => {
-			// fix best case
-			commit('UPDATE_PROJECT', payload);
-			return res;
-		})
-		.catch( err => {
-			return err;
 		});
+		commit('UPDATE_PROJECT', payload);
     },
-    async deleteProject({ commit, rootState }, payload) {
-        // api call
-		return projectsApi.deleteProject(rootState.idToken, payload.id)
-		.then(res => {
-			// fix best case
+    async deleteProject({ commit }, payload) {
+		// api call
+		await firebase.firestore().collection('projects').doc(payload.id).delete()
+		.then(() => {
 			commit('DELETE_PROJECTS', payload);
-			return res;
 		})
-		.catch( err => {
-			return err;
+		.catch((error) => {
+			return error;
 		});
     },
 };

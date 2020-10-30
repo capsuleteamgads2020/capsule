@@ -1,5 +1,5 @@
 <template>
-    <div class="" ref="container">
+    <div class="menu--bar" ref="container">
         <header ref="header">
 			<div>
 				<!-- <div class="hamburger" id="hamburger" ref="hamburger" @click.prevent="menu"><span class="openMenu" ref="openMenu">&#9776;</span><span name="close menu" class="closeMenu" ref="closeMenu">&#10005;</span></div> -->
@@ -22,6 +22,7 @@
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'Groups' }">Groups</router-link></li>
 				<!-- <li class="list--item"><router-link class="link--item" :to="{ name: 'Blog' }">Blog</router-link></li> -->
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'Dashboard' }">Dashboard</router-link></li>
+				<li class="list--item"><a class="link--item" to="#" @click.stop="onSignOut">Sign Out</a></li>
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'Account' }">Account</router-link></li>
 			</ul>
 		</nav>
@@ -78,6 +79,21 @@
 				}
 			},
 		},
+		onSignOut() {
+			// handle logout
+			this.$store.dispatch('signOut')
+			.then(() => {
+				// Sign-out successful.
+				this.$router.push("/account");
+				// window.location.reload();
+			})
+			.catch((error) =>{
+				// An error happened.
+				this.status = error.message;
+				this.$router.push("/account");
+				// this.$router.push({name: 'account'})
+			});
+		},	
     }
 </script>
 
@@ -223,6 +239,9 @@ nav.active {
 /* Wider screen */
 @media screen and (min-width: 940px) {
 /* @media screen and (min-width: 481px) and (max-width: 1020px) { */
+nav {
+	padding: 0 12rem;
+}
 .mobile--logo {
 	display: none;
 }
@@ -244,7 +263,7 @@ nav {
 	text-align: center;
 	width: 100%;
 	height: 100%;
-	/* padding-top: 3.5rem; */
+	padding: 0 12rem;
 	top: 0;
 	left: 0;
 	z-index: 10;

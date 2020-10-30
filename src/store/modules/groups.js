@@ -1,6 +1,6 @@
 'use strict'
 
-import groupsApi from '@/services/groupsApi';
+import firebase from '../../firebaseConfig.js';
 
 const state = {
 	groups: [
@@ -52,11 +52,13 @@ const getters = {
 };
 
 const actions = {
-    async addGroup({ commit, rootState }, payload) {
+    async addGroup({ commit }, payload) {
         // api call
-        return groupsApi.addGroup(rootState.idToken, {
+        await firebase.firestore().collection('groups').add({
 			name: payload.name,
-			description: payload.description,
+            description: payload.description,
+            partners: payload.partners,
+            created_at: payload.created_at,
 			active: payload.active,
 		})
 		.then(res => {
@@ -68,7 +70,7 @@ const actions = {
 			return err;
 		})
     },
-    async getGroup({ state, getters, commit, rootState }, payload) {
+    async getGroup({ state, getters, commit }, payload) {
         // filter group then api call
         if (payload.id == state.group.id) {
 			return state.group
@@ -80,7 +82,7 @@ const actions = {
 			commit('GET_GROUP', group)
 			return group;
 		} else {
-			return groupsApi.getGroup(payload.id, rootState.idToken)
+            await firebase.firestore().collection('groups').doc(payload.id).get()
 			.then(res => {
 				commit('GET_GROUP', res.data)
 				return res.data;
@@ -90,51 +92,44 @@ const actions = {
 			})
 		}
     },
-    async getGroups({ state, commit, rootState }) {
+    async getGroups({ state, commit }) {
         // api call
         // commit('GET_GROUPS', groups);
         if (state.groups && state.groups.length > 0) {
 			return state.groups;
 		}
 
-		return groupsApi.getGroups(rootState.idToken)
-		.then(res => {
-			commit('GET_GROUPS', res.data);
-			return res.data;
-		})
-		.catch( err => {
-			// var message = 'There was a problem fetching events: ' + err.message
-			return err;
-		})
+        firebase.firestore().collection('groups').orderBy('created_at', 'desc')
+		.onSnapshot(snapshot => {
+			let groups = []
+		
+			snapshot.forEach(doc => {
+				let group = doc.data()
+				group.id = doc.id
+				groups.push(group)
+			})
+			commit('GET_GROUPS', groups);
+		});
     },
-    async updateGroup({ commit, rootState }, payload) {
+    async updateGroup({ commit }, payload) {
         // api call
-        return groupsApi.updateGroup(rootState.idToken, {
-			id: payload.id,
+        await firebase.firestore().collection('groups').doc(payload.id).update({
 			name: payload.name,
-			description: payload.description,
+            description: payload.description,
+            partners: payload.partners,
+            updated_at: payload.updated_at,
 			active: payload.active,
-		})
-		.then(res => {
-			// fix best case
-			commit('UPDATE_GROUP', payload);
-			return res;
-		})
-		.catch( err => {
-			return err;
-		})
+        });
+        commit('UPDATE_GROUP', payload);
     },
-    async deleteGroup({ commit, rootState }, payload) {
+    async deleteGroup({ commit }, payload) {
         // api call
-        return groupsApi.deleteGroup(rootState.idToken, payload.id)
-		.then(res => {
-			// fix best case
+        await firebase.firestore().collection('groups').doc(payload.id).delete()
+		.then(() => {
 			commit('DELETE_GROUPS', payload);
-			return res;
-		})
-		.catch( err => {
-			return err;
-		})
+		}).catch((error) => {
+			return error;
+		});
     },
 };
 

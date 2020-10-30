@@ -9,13 +9,13 @@ import "firebase/storage";
 
 // Initialize Firebase
 firebase.initializeApp({
-  apiKey: "AIzaSyCxnpFAUa1M6dHmECR4FMXpgMzRIv06KW8",
-  authDomain: "capsulebackend.firebaseapp.com",
-  databaseURL: "https://capsulebackend.firebaseio.com",
-  projectId: "capsulebackend",
-  storageBucket: "capsulebackend.appspot.com",
-  messagingSenderId: "538523878531",
-  appId: "1:538523878531:web:fa0877e6fe7b600e1207b6"
+    apiKey: "AIzaSyAoSyOj2az4WedZ9Bc7FZ4eqQy-Ybc-it4",
+    authDomain: "dev-capsule.firebaseapp.com",
+    databaseURL: "https://dev-capsule.firebaseio.com",
+    projectId: "dev-capsule",
+    storageBucket: "dev-capsule.appspot.com",
+    messagingSenderId: "743624846633",
+    appId: "1:743624846633:web:2df8bfd00f825bb3b15b38"
 })
 
 export default firebase;

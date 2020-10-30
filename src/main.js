@@ -9,11 +9,10 @@ Vue.config.productionTip = false
 
 // handle page reloads
 let app
-firebase.auth().onAuthStateChanged(user => {
+firebase.auth().onAuthStateChanged(user => {console.log(user)
 	if (user && user.emailVerified) {
 		user.getIdTokenResult()
 		.then((idTokenResult) => {
-			store.dispatch('setIdToken', idTokenResult.token);
 			store.dispatch('setIdTokenResult', idTokenResult);
 			store.dispatch('setIsUser', idTokenResult.claims.isUser);
 		}).catch((err) => {

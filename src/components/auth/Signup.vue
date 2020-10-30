@@ -96,14 +96,6 @@ export default {
 				event.target.previousElementSibling.style.marginTop = '0.3rem';
 			}
 		},
-		onlyNumbers: function() {
-		var regex = /[^0-9]/gi;
-		this.user.phone = this.user.phone.replace(regex,'');
-		},
-		// onlyText: function() {
-		//   var regex = /[^0-9]/gi;
-		//   this.user.phone = this.user.phone.replace(regex,'');
-		// },user.emailVerified
 		onSignup () {
 			this.loading = true
 			this.$store.dispatch('signUp',{
@@ -114,25 +106,25 @@ export default {
 				created_at: this.user.created_at,
 				status: this.user.status,
 			})
-			.then( res => {
-				if (res.emailVerified) {
+			.then(res => {
+				if (res.user.emailVerified) {
 					this.loading = false;
 					this.message = 'Your sign up was successful, awaiting platform approval.';
-					this.$router.push('/account');
+					this.$router.push('/home');
 				}
 				else {
 					this.loading = false;
-					this.message = `An email verification link has been sent to ${res.email}\nKindly verify your account to countinue using the platform.`;
+					this.message = `An email verification link has been sent to ${res.user.email}<br>Kindly verify your account to countinue using the platform.`;
 					this.$emit('message', this.message)
-					this.$router.push('/account');
+					this.$router.push('/home');
 				}
 			})
 			.catch(err => {
 				this.loading = false;
 				this.message = err.message;
-				this.$emit('message', this.message)
-				this.$router.push('/account');
-				return err;
+				this.$emit('message', this.message);
+				// this.$router.push('/account');
+				// return err;
 			})
 		}
 	}

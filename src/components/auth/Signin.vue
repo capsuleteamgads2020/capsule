@@ -111,8 +111,8 @@ export default {
 				email: this.user.email,
 				password: this.user.password
 			})
-			.then(async (res) => {
-				if (res.emailVerified) {
+			.then(async (res) => {console.log(res)
+				if (res.user.emailVerified) {
 					this.$store.dispatch('getGroups');
 					this.$store.dispatch('getProjects');
 					this.$store.dispatch('getBookmarks');
@@ -124,16 +124,15 @@ export default {
 					this.loading = false;
 					this.message = 'This email is not verified. Kindly verify and re-sign in!';
 					this.$emit('message', this.message)
-					this.$router.push({ name: 'Account' });
+					this.$router.push('/account');
 				}
-				// this.$store.dispatch('fetchUserprofile')
 			})
 			.catch(err => {
 				this.loading = false;
 				this.message = err.message;
 				this.$emit('message', this.message)
-				// this.$router.push({ name: 'Account' });
-				return err;
+				// this.$router.push('/account');
+				// return err;
 			})
 		},
 	}

@@ -1,6 +1,6 @@
 'use strict'
 
-import commentsApi from '@/services/commentsApi';
+import firebase from '../../firebaseConfig.js';
 
 const state = {
 	comments: [
@@ -77,9 +77,9 @@ const getters = {
 };
 
 const actions = {
-    async addComment({ commit, rootState }, payload) {
+    async addComment({ commit }, payload) {
         // api call
-        return commentsApi.addComment(rootState.idToken, {
+        await firebase.firestore().collection('comments').add({
 			comment: payload.comment,
 		})
 		.then(res => {
@@ -91,7 +91,7 @@ const actions = {
 			return err;
 		});
     },
-    async getComment({ state, getters, commit, rootState }, payload) {
+    async getComment({ state, getters, commit }, payload) {
         // filter comment then api call
         if (payload.id == state.comment.id) {
 			return state.comment
@@ -103,7 +103,7 @@ const actions = {
 			commit('GET_COMMENT', comment)
 			return comment;
 		} else {
-			return commentsApi.getComment(payload.id, rootState.idToken)
+            await firebase.firestore().collection('comments').doc(payload.id).get()
 			.then(res => {
 				commit('GET_COMMENT', res.data)
 				return res.data;
@@ -113,26 +113,27 @@ const actions = {
 			});
 		}
     },
-    async getComments({ state, commit, rootState }) {
+    async getComments({ state, commit }) {
         // api call
         if (state.comments && state.comments.length > 0) {
 			return state.comments;
 		}
-
-		return commentsApi.getComments(rootState.idToken)
-		.then(res => {
-			commit('GET_COMMENTS', res.data);
-			return res.data;
-		})
-		.catch( err => {
-			// var message = 'There was a problem fetching events: ' + err.message
-			return err;
+		// realtime firebase connection
+		firebase.firestore().collection('projects').orderBy('created_at', 'desc')
+		.onSnapshot(snapshot => {
+			let comments = []
+		
+			snapshot.forEach(doc => {
+				let comment = doc.data()
+				comment.id = doc.id
+				comments.push(comment)
+			})
+			commit('GET_COMMENTS', comments);
 		});
     },
-    async updateComment({ commit, rootState }, payload) {
+    async updateComment({ commit }, payload) {
         // api call
-        return commentsApi.updateComment(rootState.idToken, {
-			id: payload.id,
+        await firebase.firestore().collection('projects').doc(payload.id).update({
 			comment: payload.comment,
 		})
 		.then(res => {
@@ -144,17 +145,14 @@ const actions = {
 			return err;
 		});
     },
-    async deleteComment({ commit, rootState }, payload) {
+    async deleteComment({ commit }, payload) {
         // api call
-        // commit('DELETE_COMMENTS', comment.id);
-        return commentsApi.deleteComment(rootState.idToken, payload.id)
-		.then(res => {
-			// fix best case
-			commit('DELETE_PROJECTS', payload);
-			return res;
+        await firebase.firestore().collection('comments').doc(payload.id).delete()
+		.then(() => {
+			commit('DELETE_COMMENTS', payload);
 		})
-		.catch( err => {
-			return err;
+		.catch((error) => {
+			return error;
 		});
     },
 };

@@ -1,6 +1,6 @@
 <template>
     <div class="notification--container">
-        <div v-if="notifications">
+        <div v-if="content">
             <section class="notification" v-for="notification in unreadNotifications" :key="notification.id">
                 <div class="notification--header">
                     <h3 class="">{{ notification.name }}</h3>
@@ -30,7 +30,7 @@
                 </div>
             </section>
         </div>
-        <div v-else>No notification!!!</div>
+        <div v-else style="padding: 3rem 0;">No notification!!!</div>
     </div>
 </template>
 
@@ -57,7 +57,10 @@ export default {
         ...mapGetters(['notifications', 'user']),
         unreadNotifications() {
 			return this.notifications.filter(notification => notification.read == false);
-		},
+        },
+        content() {
+            return this.unreadNotifications.length > 0;
+        }
     },
     mounted() {
         // this.$emit('notification', this.notifications.filter(notification => notification.read == false).length);

@@ -1,8 +1,8 @@
 <template>
 	<div class="container" ref="" :class="{active: menu}">
 		<Header @toggleMenu="toggleMenu"></Header>
-		<div style="color: #ff0000; background-color: #f5f5f5; padding: .5rem 0;">{{status}}</div>
 		<section class="account">
+			<div v-if="status" style="color: #ff0000; background-color: #f5f5f5; padding: .5rem 0; text-align: center;" v-html="status"></div>
 			<transition name="fade">
 				<!-- <div v-if="loading" class="loading"> -->
 				<!-- <Loader></Loader> -->
@@ -10,20 +10,22 @@
 				<!-- </div> -->
 			</transition>
 			<!-- Toggle sign in/ up forms -->
-			<div class="auth--button">
-				<button class="form_button" :class="{ formActive: isNew}" id="sign_up" @click.stop.prevent="signUP">Sign Up</button>
-				<button class="form_button" :class="{ formActive: !isNew}" id="sign_in" @click.stop.prevent="signIn">Sign In</button>
-			</div>
-			<!-- form goes here -->
-			<div class="forms">
-				<!-- Sign up form goes here -->
-				<div class="sign_up_form" v-if="isNew">
-					<Signup @message="message"></Signup>
+			<div style="border: 1px solid #DFAB24; padding: 1rem 0; margin-bottom: 5rem;">
+				<div class="auth--button">
+					<button class="form_button" :class="{ formActive: isNew}" id="sign_up" @click.stop.prevent="signUP">Sign Up</button>
+					<button class="form_button" :class="{ formActive: !isNew}" id="sign_in" @click.stop.prevent="signIn">Sign In</button>
 				</div>
+				<!-- form goes here -->
+				<div class="forms">
+					<!-- Sign up form goes here -->
+					<div class="sign_up_form" v-if="isNew">
+						<Signup @message="message"></Signup>
+					</div>
 
-				<!-- Sign in form goes here -->
-				<div class="sign_in_form" v-else>
-					<Signin @message="message"></Signin>
+					<!-- Sign in form goes here -->
+					<div class="sign_in_form" v-else>
+						<Signin @message="message"></Signin>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -116,5 +118,14 @@ export default {
 .text--content {
   text-align: center;
   margin: 2rem 0;
+}
+/* Wider screen */
+@media screen and (min-width: 940px) {
+.account {
+	padding-left: 25rem;
+	padding-right: 25rem;
+	
+	/* padding: 0 20rem; */
+}
 }
 </style>

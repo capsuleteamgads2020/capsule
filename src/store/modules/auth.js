@@ -11,16 +11,17 @@ const state = {
         avatar: '../assets/avatar.jpeg',
     },
 	isUser: null,
-	idToken: null,
 	idTokenResult: null,
 };
 
 const getters = {
 	user: state => state.user,
 	isUser: state => state.isUser,
-	idToken: state => state.idToken,
 	idTokenResult: state => state.idTokenResult,
 };
+
+// const db = firebase.firestore()
+// const auth = firebase.auth()
 
 const actions = {
 	async getUser({ commit, getters }, payload) {
@@ -38,52 +39,61 @@ const actions = {
 		// api call
 		commit('SET_IS_USER', isUser);
 	},
-	async setIdToken({ commit }, idToken) {
-		// api call
-		commit('SET_ID_TOKEN', idToken);
-	},
 	async setIdTokenResult({ commit }, idTokenResult) {
 		// api call
 		commit('SET_ID_TOKEN_RESULT', idTokenResult);
 	},
-	async signUp(payload) {
+	async signUp({ commit }, payload) {
 		return firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-		.then( async (user) => {
+		.then( async (user) => {console.log(user)
 			await firebase.auth().currentUser.sendEmailVerification();
-			// commit('SET_ADMIN_USER', school.user);
-			await authApi.addUser({
-				id: user.user.uid,
+			await firebase.auth().currentUser.updateProfile({
+				displayName: payload.name,
+				phoneNumber: payload.phone,
+				photoURL: 'https://firebasestorage.googleapis.com/v0/b/dev-capsule.appspot.com/o/avatar.jpeg?alt=media&token=55f88f28-76c8-4670-8caa-e08267b096fa',
+			});
+			await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+				id: firebase.auth().currentUser.uid,
 				email: payload.email,
 				name: payload.name,
 				phone: payload.phone,
-				imageUrl: '',
+				imageUrl: 'https://firebasestorage.googleapis.com/v0/b/dev-capsule.appspot.com/o/avatar.jpeg?alt=media&token=55f88f28-76c8-4670-8caa-e08267b096fa',
 				created_at: payload.created_at,
 				status: payload.status
-			});
+			})
+			if (firebase.auth().currentUser.emailVerified) {
+				commit('SET_USER', user);
+			}
 			return user;
 		})
 		.catch(error => {
 			return error;
 		});
 	},
-	async signIn ({ commit, dispatch }, payload) {
-		// this.loading = true
+	async signIn ({ commit }, payload) {
 		return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-		.then( user => {
-			// var payload = {'id': user.uid};
-			dispatch('getUser', {'id': user.uid});
-			firebase.auth().onAuthStateChanged(user => {
-				user.getIdToken(/* forceRefresh */ )
-				.then(idToken => {
-					commit('SET_ID_TOKEN', idToken);
-				})
-				.catch(err => {
-					return err;
-				});
-			})
+		.then( async (user) => {
+			const res = await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get()
+			commit('SET_USER', res.data);
 			return user;
+		})
+		.catch(error => {
+			return error;
 		});
 	},
+	// async signOut ({ commit }) {
+	// 	firebase.auth().signOut()
+	// 	.then(() => {
+	// 		commit('SET_IS_USER', null);
+	// 		commit('SET_USER', {});
+	// 		commit('SET_ID_TOKEN', null);
+	// 		commit('SET_ID_TOKEN_RESULT', null);
+	// 		commit('SIGN_OUT');
+	// 	}).catch(err => {
+	// 		// console.log(err)
+	// 		return err;
+	// 	})
+	// },
 };
 
 const mutations = {
@@ -92,9 +102,6 @@ const mutations = {
 	},
 	SET_IS_USER(state, isUser) {
 		state.isUser = isUser;
-	},
-	SET_ID_TOKEN(state, idToken) {
-		state.idToken = idToken;
 	},
 	SET_ID_TOKEN_RESULT(state, idTokenResult) {
 		state.idTokenResult = idTokenResult;

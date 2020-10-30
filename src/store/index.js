@@ -5,6 +5,7 @@ import projects from './modules/projects';
 import groups from './modules/groups';
 import comments from './modules/comments';
 import auth from './modules/auth';
+// import firebase from '../../firebaseConfig.js';
 
 Vue.use(Vuex)
 
@@ -81,6 +82,22 @@ export default new Vuex.Store({
 		contributors: state => state.contributors,
 	},
 	actions: {
+		// async addNotification({ commit, rootState }, payload) {
+		// 	// api call
+		// 	await firebase.firestore().collection('notifications').doc(rootState.user.id).set({
+
+		// 		created_at: payload.created_at,
+		// 		active: payload.active,
+		// 	})
+		// 	.then(res => {
+		// 		// commit project
+		// 		commit('ADD_PROJECT', payload);
+		// 		return res;
+		// 	})
+		// 	.catch( err => {
+		// 		return err;
+		// 	});
+		// },
 		async getNotifications(/*{ commit }*/) {
 			// api call
 			// commit('GET_NOTIFICATIONS', notifications);

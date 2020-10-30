@@ -223,7 +223,13 @@ export default {
 			}
         },
         createGroup() {
-            
+            this.$store.dispatch('addGroup', {
+                name: this.group.name,
+                description: this.group.description,
+                active: this.group.active,
+                partners: this.partners,
+                created_at: Date.now(),
+            });
         },
         join(group) {
             if (!group.members.includes(this.user.id)) {
