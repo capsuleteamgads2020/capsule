@@ -1,6 +1,6 @@
 <template>
     <div class="bookmarks--container">
-        <section class="bookmarks">
+        <section class="bookmarks" v-if="bookmarks.length">
             <section  v-for="(bookmark) in bookmarks" :key="bookmark.id" style="border-bottom: 1px solid #DFAB24;">
                 <section class="bookmarks--item">
                     <div class="bookmarks--profile">
@@ -69,6 +69,9 @@
                     </div>
                 </section>
             </section>
+        </section>
+        <section class="bookmarks" v-else>
+            <div>Bookmark is empty!!!</div>
         </section>
     </div>
 </template>

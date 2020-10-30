@@ -117,20 +117,25 @@ export default {
 					this.$store.dispatch('getProjects');
 					this.$store.dispatch('getBookmarks');
 					this.$store.dispatch('getNotifications');
+					this.message = 'Your sign in was successfully!!!';
+					this.$store.dispatch('getMessage', this.message);
 					this.loading = false;
 					await this.$router.push(this.$route.query.redirect || '/dashboard');
 				}
 				else {
 					this.loading = false;
 					this.message = 'This email is not verified. Kindly verify and re-sign in!';
+					this.$store.dispatch('getMessage', this.message);
 					this.$emit('message', this.message)
-					this.$router.push({ name: 'Account' });
+					return;
+					// this.$router.push({ name: 'Account' });
 				}
 				// this.$store.dispatch('fetchUserprofile')
 			})
 			.catch(err => {
 				this.loading = false;
 				this.message = err.message;
+				this.$store.dispatch('getMessage', this.message);
 				this.$emit('message', this.message)
 				// this.$router.push({ name: 'Account' });
 				return err;

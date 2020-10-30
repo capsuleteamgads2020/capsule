@@ -18,68 +18,93 @@
 				<li class="list--item"><router-link class="link--item home" :to="{ name: 'Home' }">Home</router-link></li>
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'About' }">About</router-link></li>
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'Forum' }">Forum</router-link></li>
-				<li class="list--item"><router-link class="link--item" :to="{ name: 'Projects' }">Projects</router-link></li>
+				<li v-if="isUser" class="list--item"><router-link class="link--item" :to="{ name: 'Projects' }">Projects</router-link></li>
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'Groups' }">Groups</router-link></li>
 				<!-- <li class="list--item"><router-link class="link--item" :to="{ name: 'Blog' }">Blog</router-link></li> -->
-				<li class="list--item"><router-link class="link--item" :to="{ name: 'Dashboard' }">Dashboard</router-link></li>
-				<li class="list--item"><a class="link--item" to="#" @click.stop="onSignOut">Sign Out</a></li>
-				<li class="list--item"><router-link class="link--item" :to="{ name: 'Account' }">Account</router-link></li>
+				<li v-if="isUser" class="list--item"><router-link class="link--item" :to="{ name: 'Dashboard' }">Dashboard</router-link></li>
+				<li v-if="isUser" class="list--item"><a class="link--item" to="#" @click.stop="onSignOut">Sign Out</a></li>
+				<li v-if="!isUser" class="list--item"><router-link class="link--item" :to="{ name: 'Account' }">Account</router-link></li>
 			</ul>
 		</nav>
     </div>
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-				isHovering: false,
-				isMenu: false,
-            }
-		},
-		created() {
-			window.addEventListener('resize', this.handleResize);
-			this.handleResize();
-		},
-		destroyed() {
-			window.removeEventListener('resize', this.handleResize);
-		},
-		methods: {
-			handleResize() {
-				if (window.innerWidth > 940) {
-					this.$emit('toggleMenu', this.isMenu = false);
-					if (this.$refs.nav || this.$refs.hamburger || this.$refs.header) {
-						this.$refs.header.classList.remove('active');
-						this.$refs.nav.classList.remove('active');
-						this.$refs.hamburger.classList.remove('active');
-					}
+// @ is an alias to /src
+import { mapGetters } from 'vuex'
+export default {
+	data() {
+		return {
+			isHovering: false,
+			isMenu: false,
+			message: '',
+		}
+	},
+	created() {
+		window.addEventListener('resize', this.handleResize);
+		this.handleResize();
+	},
+	destroyed() {
+		window.removeEventListener('resize', this.handleResize);
+	},
+	computed: {
+        ...mapGetters(['isUser']),
+    },
+	methods: {
+		handleResize() {
+			if (window.innerWidth > 940) {
+				this.$emit('toggleMenu', this.isMenu = false);
+				if (this.$refs.nav || this.$refs.hamburger || this.$refs.header) {
+					this.$refs.header.classList.remove('active');
+					this.$refs.nav.classList.remove('active');
+					this.$refs.hamburger.classList.remove('active');
+				}
 
-				}
-			},
-			menu() {
-				this.$emit('toggleMenu', this.isMenu = !this.isMenu);
-				//Open and closes the menu icon in mobile mode touchend
-				const hamburger = this.$refs.hamburger;
-				const header = this.$refs.header;
-				const nav = this.$refs.nav;
-				// const overlay = document.querySelector('#overlay');
-				// overlay.classList.toggle('active');
-				header.classList.toggle('active');
-				nav.classList.toggle('active');
-				const open = this.$refs.openMenu;
-				const close = this.$refs.closeMenu;
-				if (this.isMenu == true) {
-					hamburger.classList.add('active');
-					open.style.display = 'none';    
-					close.style.display = 'block';
-				} else {
-					hamburger.classList.remove('active');
-					open.style.display = 'block';
-					close.style.display = 'none';
-				}
-			},
+			}
 		},
-    }
+		menu() {
+			this.$emit('toggleMenu', this.isMenu = !this.isMenu);
+			//Open and closes the menu icon in mobile mode touchend
+			const hamburger = this.$refs.hamburger;
+			const header = this.$refs.header;
+			const nav = this.$refs.nav;
+			// const overlay = document.querySelector('#overlay');
+			// overlay.classList.toggle('active');
+			header.classList.toggle('active');
+			nav.classList.toggle('active');
+			const open = this.$refs.openMenu;
+			const close = this.$refs.closeMenu;
+			if (this.isMenu == true) {
+				hamburger.classList.add('active');
+				open.style.display = 'none';    
+				close.style.display = 'block';
+			} else {
+				hamburger.classList.remove('active');
+				open.style.display = 'block';
+				close.style.display = 'none';
+			}
+		},
+		onSignOut() {
+			// handle logout
+			this.$store.dispatch('signOut')
+			.then(() => {
+				// Sign-out successful.
+				this.message = 'Your sign out was successfully!!!';
+				this.$emit('message', this.message);
+				this.$store.dispatch('getMessage', this.message);
+				this.$router.push({name: 'Account'});
+				// window.location.reload();
+			})
+			.catch((error) =>{
+				// An error happened.
+				this.status = error.message;
+				this.$store.dispatch('getMessage', this.message);
+				this.$router.push("/account");
+				// this.$router.push({name: 'account'})
+			});
+		},
+	},
+}
 </script>
 
 <style scoped>

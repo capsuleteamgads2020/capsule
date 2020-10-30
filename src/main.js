@@ -15,7 +15,8 @@ firebase.auth().onAuthStateChanged(user => {
 		.then((idTokenResult) => {
 			store.dispatch('setIdToken', idTokenResult.token);
 			store.dispatch('setIdTokenResult', idTokenResult);
-			store.dispatch('setIsUser', idTokenResult.claims.isUser);
+			// store.dispatch('setIsUser', idTokenResult.claims.isUser);
+			store.dispatch('setIsUser', user);
 		}).catch((err) => {
 			return err;
 		});

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import firebase from '../firebaseConfig.js';
 // import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -8,7 +9,8 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/about',
@@ -16,7 +18,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/tweet',
@@ -40,7 +43,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/components/auth/ResetPassword.vue')
+    component: () => import(/* webpackChunkName: "about" */ '@/components/auth/ResetPassword.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/terms',
@@ -48,7 +52,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Terms.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Terms.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/privacy',
@@ -56,7 +61,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Privacy.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Privacy.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/blog',
@@ -64,7 +70,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Blog.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Blog.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/forum',
@@ -72,7 +79,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Forum.vue')
+	component: () => import(/* webpackChunkName: "about" */ '../views/Forum.vue'),
+	meta: { requiresAuth: true },
   },
   {
     path: '/account',
@@ -80,7 +88,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Account.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Account.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/projects',
@@ -88,7 +97,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Projects.vue')
+	component: () => import(/* webpackChunkName: "about" */ '../views/Projects.vue'),
+	meta: { requiresAuth: true },
   },
   {
     path: '/groups',
@@ -96,7 +106,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Groups.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Groups.vue'),
+    meta: { guest: true } 
   },
   {
     path: '/dashboard',
@@ -104,7 +115,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Dashboard.vue')
+	component: () => import(/* webpackChunkName: "about" */ '../views/Dashboard.vue'),
+	meta: { requiresAuth: true },
   }
 ]
 
@@ -112,6 +124,16 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+	// const requiresAuth = to.matched.some(x => x.meta.requiresAuth)
+	if (to.matched.some(record => record.meta.requiresAuth) && !firebase.auth().currentUser) {
+	// if (requiresAuth && !auth.currentUser) {
+		next('/account')
+	} else {
+		next()
+	}
 })
 
 export default router

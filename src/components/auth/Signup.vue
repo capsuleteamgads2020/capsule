@@ -118,6 +118,7 @@ export default {
 				if (res.user.emailVerified) {
 					this.loading = false;
 					this.message = 'Your sign up was successful, awaiting platform approval.';
+					this.$store.dispatch('getMessage', this.message);
 					this.$router.push({ name: 'Dashboard', params: { message: this.message } });
 				}
 				else {
@@ -131,7 +132,7 @@ export default {
 			.catch(err => {
 				this.loading = false;
 				this.message = err.message;
-				this.$emit('message', this.message)
+				this.$store.dispatch('getMessage', this.message);
 				this.$router.push({ name: 'Home', params: { message: this.message } });
 				return err;
 			})

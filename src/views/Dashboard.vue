@@ -2,13 +2,16 @@
 	<div class="container" ref="" :class="{active: menu}">
 		<Header @toggleMenu="toggleMenu"></Header>
 		<div class="dashboard">
+			<div v-if="status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
 			<section>
-				<h1>{{ user.full_name }}'s Dashboard</h1>
+				<h1>Dashboard</h1>
 				<hr class="" style="background-image: -webkit-linear-gradient(left, #fee7d0, #fc8917, #fee7d0); height: 0.2rem; margin: 1rem 0; border: 0;">
 			</section>
 			<section class="profile">
 				<div class="avatar">
-					<img :alt="user.full_name" src="../assets/avatar.jpeg">
+					<router-link class="link--item home" :to="{ name: 'Dashboard' }">
+						<img :alt="user.full_name" src="../assets/avatar.jpeg">
+					</router-link>
 				</div>
 				<div class="icon--container">
 					<!-- As per svg description here: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text -->
@@ -153,10 +156,11 @@ export default {
 			// notifications: '',
 			// groups: '',
 			menu: false,
+			status: '',
 		}
 	},
 	computed: {
-		...mapGetters(['notifications', 'bookmarks', 'groups', 'user']),
+		...mapGetters(['notifications', 'bookmarks', 'groups', 'user', 'message']),
 		// ...mapState(['bookmarks', 'auth']),
 		unreadNotifications() {
 			return this.notifications.filter(notification => notification.read == false).length;
@@ -164,6 +168,13 @@ export default {
 		filteredGroups() {
             return this.groups.filter(group => group.members.includes(this.user.id)).length;
         },
+	},
+	mounted(){
+		if (this.message != '') {
+			this.status = this.message;
+			this.callFunction();
+			this.$store.dispatch('getMessage', this.message = '');
+		}
 	},
 	methods: {
 		toggleMenu(val) {
@@ -175,6 +186,12 @@ export default {
 		// group(val) {
 		// 	this.groups = val;
 		// },
+		callFunction: function () {
+            var v = this;
+            setTimeout(function () {
+				v.status = '';
+            }, 10000);
+        },
 		enableNotification() {
 			if (this.isNotification) {
 				return;

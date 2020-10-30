@@ -48,12 +48,16 @@ const actions = {
 	},
 	async signUp({commit}, payload) {
 		return firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-		.then( async (user) => {
+		.then( async (isUser) => {
 			await firebase.auth().currentUser.sendEmailVerification();
-			// console.log(firebase.auth().currentUser.emailVerified)
-			// console.log(user)
+			await firebase.auth().currentUser.updateProfile({
+				displayName: payload.name,
+				phoneNumber: payload.phone,
+				photoURL: 'https://firebasestorage.googleapis.com/v0/b/dev-capsule.appspot.com/o/avatar.jpeg?alt=media&token=55f88f28-76c8-4670-8caa-e08267b096fa',
+			});
 			if (firebase.auth().currentUser.emailVerified) {
-				commit('SET_USER', user);
+				commit('SET_IS_USER', isUser);
+				// commit('SET_USER', user);
 			}
 			// await authApi.addUser({
 			// 	id: user.user.uid,
@@ -64,29 +68,44 @@ const actions = {
 			// 	created_at: payload.created_at,
 			// 	status: payload.status
 			// });
-			return user;
+			return isUser;
 		})
 		.catch(error => {
 			return error;
 		});
 	},
-	async signIn ({ commit, dispatch }, payload) {
+	async signIn ({ commit }, payload) {
 		// this.loading = true
 		return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-		.then( user => {
+		.then( isUser => {
 			// var payload = {'id': user.uid};
-			dispatch('getUser', {'id': user.uid});
-			firebase.auth().onAuthStateChanged(user => {
-				user.getIdToken(/* forceRefresh */ )
-				.then(idToken => {
-					commit('SET_ID_TOKEN', idToken);
-				})
-				.catch(err => {
-					return err;
-				});
-			})
-			return user;
+			// dispatch('getUser', {'id': user.uid});
+			commit('SET_IS_USER', isUser);
+			// firebase.auth().onAuthStateChanged(user => {
+			// 	user.getIdToken(/* forceRefresh */ )
+			// 	.then(idToken => {
+			// 		commit('SET_ID_TOKEN', idToken);
+			// 		commit('SET_USER', user);
+			// 	})
+			// 	.catch(err => {
+			// 		return err;
+			// 	});
+			// })
+			return isUser;
 		});
+	},
+	async signOut ({ commit }) {
+		firebase.auth().signOut()
+		.then(() => {
+			commit('SET_IS_USER', null);
+			commit('SET_USER', {});
+			commit('SET_ID_TOKEN', null);
+			commit('SET_ID_TOKEN_RESULT', null);
+			commit('SIGN_OUT');
+		}).catch(err => {
+			// console.log(err)
+			return err;
+		})
 	},
 };
 
@@ -102,6 +121,12 @@ const mutations = {
 	},
 	SET_ID_TOKEN_RESULT(state, idTokenResult) {
 		state.idTokenResult = idTokenResult;
+	},
+	SIGN_OUT(state) {
+		state.idToken = null;
+		state.idTokenResult = null;
+		state.user = null;
+		state.isUser = null;
 	},
 };
 

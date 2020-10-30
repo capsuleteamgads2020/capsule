@@ -1,7 +1,8 @@
 <template>
 	<div class="container" ref="" :class="{active: menu}">
-		<Header @toggleMenu="toggleMenu"></Header>
+		<Header @toggleMenu="toggleMenu" @message="message"></Header>
 		<section class="account">
+			<div v-if="status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
 			<transition name="fade">
 				<!-- <div v-if="loading" class="loading"> -->
 				<!-- <Loader></Loader> -->
@@ -11,7 +12,7 @@
 			<!-- Toggle sign in/ up forms -->
 			<div style="border: 1px solid #DFAB24; padding: 1rem 0; margin-bottom: 5rem;">
 				<div class="auth--button">
-					<button class="form_button" :class="{ formActive: isNew}" id="sign_up" @click.stop.prevent="signUP">Sign Up</button>
+					<button class="form_button" :class="{ formActive: isNew}" id="sign_up" @click.stop.prevent="signUp">Sign Up</button>
 					<button class="form_button" :class="{ formActive: !isNew}" id="sign_in" @click.stop.prevent="signIn">Sign In</button>
 				</div>
 				<!-- form goes here -->
@@ -36,7 +37,7 @@
 import Header from '@/components/partials/Header.vue'
 import Signin from '@/components/auth/Signin.vue'
 import Signup from '@/components/auth/Signup.vue'
-
+import { mapGetters } from 'vuex'
 export default {
 	name: 'Account',
 	components: {
@@ -57,15 +58,28 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters(['message']),
+	},
+	mounted(){
+		if (this.message != '') {
+			this.status = this.message;
+			this.callFunction();
+		}
 	},
 	methods: {
 		toggleMenu(val) {
 			this.menu = val;
 		},
-		message(message) {
-			this.status = message;
-		},
-		signUP () {
+		// message(message) {
+		// 	this.status = message;
+		// },
+		callFunction: function () {
+            var v = this;
+            setTimeout(function () {
+                v.status = '';
+            }, 10000);
+        },
+		signUp () {
 			this.isNew = true;
 		},
 		signIn () {
