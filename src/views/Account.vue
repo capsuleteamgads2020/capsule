@@ -24,7 +24,7 @@
 
 					<!-- Sign in form goes here -->
 					<div class="sign_in_form" v-else>
-						<Signin @message="message"></Signin>
+						<Signin @msg="msg"></Signin>
 					</div>
 				</div>
 			</div>
@@ -70,9 +70,11 @@ export default {
 		toggleMenu(val) {
 			this.menu = val;
 		},
-		// message(message) {
-		// 	this.status = message;
-		// },
+		msg(msg) {
+			this.status = msg;
+			console.log(msg)
+			this.callFunction();
+		},
 		callFunction: function () {
             var v = this;
             setTimeout(function () {

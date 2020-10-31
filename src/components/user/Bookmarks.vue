@@ -88,7 +88,6 @@ export default {
     },
     computed: {
         ...mapGetters(['bookmarks', 'user']),
-        // ...mapState(['bookmarks', 'auth']),
     },
     mounted() {
         this.timer();
@@ -281,9 +280,9 @@ export default {
     height: 16px;
 	margin-right: 5px;
 }
-.bookmarks--bookmark {
+/* .bookmarks--bookmark {
 
-}
+} */
 .bookmarks--content--divider {
 	border-top: 1px solid #DFAB24;
 }

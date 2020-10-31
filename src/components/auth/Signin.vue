@@ -2,8 +2,7 @@
 	<div class="sign_in_form">
 		<transition name="fade">
 			<div v-if="loading" class="loading">
-			<!-- <Loader class="loader" :loading="loading"></Loader> -->
-			<!-- <Spinner :animation-duration="2500" :rhombus-size="15" color="#ff1d5e"></Spinner> -->
+			<Loader class="loader" :loading="loading"></Loader>
 			</div>
 		</transition>
 		<section class="title">
@@ -46,15 +45,13 @@
 <script>
 // @ is an alias to /src
 import ResetPassword from '@/components/auth/ResetPassword'
-// import Spinner from '@/components/partials/Spinner.vue'
-// import Loader from '@/components/partials/Loader.vue'
+import Loader from '@/components/partials/Loader.vue'
 import { mapActions } from "vuex";
 export default {
 	name: 'signin',
 	components: {
 		ResetPassword,
-		// Loader,
-		// Spinner
+		Loader,
 	},
 	data () {
 		return {
@@ -112,11 +109,7 @@ export default {
 				password: this.user.password
 			})
 			.then(async (res) => {
-				if (res.user.emailVerified) {
-					this.$store.dispatch('getGroups');
-					this.$store.dispatch('getProjects');
-					this.$store.dispatch('getBookmarks');
-					this.$store.dispatch('getNotifications');
+				if (res.user && res.user.emailVerified) {
 					this.message = 'Your sign in was successfully!!!';
 					this.$store.dispatch('getMessage', this.message);
 					this.loading = false;
@@ -126,17 +119,14 @@ export default {
 					this.loading = false;
 					this.message = 'This email is not verified. Kindly verify and re-sign in!';
 					this.$store.dispatch('getMessage', this.message);
-					this.$emit('message', this.message)
+					this.$emit('msg', this.message);
 					return;
-					// this.$router.push({ name: 'Account' });
 				}
-				// this.$store.dispatch('fetchUserprofile')
 			})
 			.catch(err => {
 				this.loading = false;
 				this.message = err.message;
 				this.$store.dispatch('getMessage', this.message);
-				this.$emit('message', this.message)
 				// this.$router.push({ name: 'Account' });
 				return err;
 			})

@@ -103,7 +103,7 @@ const actions = {
 			commit('GET_COMMENT', comment)
 			return comment;
 		} else {
-			return commentsApi.getComment(payload.id, rootState.idToken)
+			return commentsApi.getComment(rootState.idToken, payload.id)
 			.then(res => {
 				commit('GET_COMMENT', res.data)
 				return res.data;
@@ -119,7 +119,7 @@ const actions = {
 			return state.comments;
 		}
 
-		return commentsApi.getComments(rootState.idToken)
+		return commentsApi.getComments(rootState.idToken, rootState.user.uid)
 		.then(res => {
 			commit('GET_COMMENTS', res.data);
 			return res.data;
@@ -133,7 +133,7 @@ const actions = {
         // api call
         return commentsApi.updateComment(rootState.idToken, {
 			id: payload.id,
-			comment: payload.comment,
+			reply: payload.reply,
 		})
 		.then(res => {
 			// fix best case

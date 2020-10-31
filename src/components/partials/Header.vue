@@ -17,9 +17,9 @@
 				<!-- <li class="list--item logo"><router-link class="link--item" :to="{ name: 'Home' }"><img alt="Capsule logo" src="../../assets/logo.svg"></router-link></li> -->
 				<li class="list--item"><router-link class="link--item home" :to="{ name: 'Home' }">Home</router-link></li>
 				<li class="list--item"><router-link class="link--item" :to="{ name: 'About' }">About</router-link></li>
-				<li class="list--item"><router-link class="link--item" :to="{ name: 'Forum' }">Forum</router-link></li>
-				<li v-if="isUser" class="list--item"><router-link class="link--item" :to="{ name: 'Projects' }">Projects</router-link></li>
-				<li class="list--item"><router-link class="link--item" :to="{ name: 'Groups' }">Groups</router-link></li>
+				<!-- <li class="list--item"><router-link class="link--item" :to="{ name: 'Forum' }">Forum</router-link></li> -->
+				<li class="list--item"><router-link class="link--item" :to="{ name: 'Projects' }">Projects</router-link></li>
+				<!-- <li class="list--item"><router-link class="link--item" :to="{ name: 'Groups' }">Groups</router-link></li> -->
 				<!-- <li class="list--item"><router-link class="link--item" :to="{ name: 'Blog' }">Blog</router-link></li> -->
 				<li v-if="isUser" class="list--item"><router-link class="link--item" :to="{ name: 'Dashboard' }">Dashboard</router-link></li>
 				<li v-if="isUser" class="list--item"><a class="link--item" to="#" @click.stop="onSignOut">Sign Out</a></li>
@@ -90,14 +90,14 @@ export default {
 			.then(() => {
 				// Sign-out successful.
 				this.message = 'Your sign out was successfully!!!';
-				this.$emit('message', this.message);
+				// this.$emit('message', this.message);
 				this.$store.dispatch('getMessage', this.message);
 				this.$router.push({name: 'Account'});
 				// window.location.reload();
 			})
 			.catch((error) =>{
 				// An error happened.
-				this.status = error.message;
+				this.message = error.message;
 				this.$store.dispatch('getMessage', this.message);
 				this.$router.push("/account");
 				// this.$router.push({name: 'account'})
@@ -270,7 +270,7 @@ nav {
 	text-align: center;
 	width: 100%;
 	height: 100%;
-	padding: 0 12rem;
+	padding: 0 20rem;
 	top: 0;
 	left: 0;
 	z-index: 10;

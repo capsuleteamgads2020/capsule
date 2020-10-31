@@ -2,6 +2,7 @@
 	<div class="container" ref="" :class="{active: menu}">
 		<Header @toggleMenu="toggleMenu"></Header>
         <div class="projects--container">
+			<div v-if="status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
             <section class="project--title">
                 <h3 class="">Avialable Projects</h3>
                 <!-- <div style="position: absolute; right: 0; top: 0;">
@@ -17,59 +18,10 @@
                     <button type="button" class="project--btn" @click="enterCreate">Create Project</button>
                 </div> -->
             </section><hr>
-            <!-- <section v-if="create" class="project">
-                <div class="project--title">
-                    <h3 class="">Create a Project</h3>
-                    <div style="position: absolute; right: 0; top: 0;">
-                        <button type="button" class="project--icon" :class="{'project--icon--enable': create}" @click="exitCreate()">
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
-                                <g transform="translate(10,70) scale(0.05,-0.05)">
-                                    <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
-                                </g>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <hr>
-                <div>
-                    <form action="">
-                        <div class="form--item">
-                            <label for="name" class="label required">Project Name: </label>
-                            <input type="text" name="name" id="name" v-model="project.name" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Project name" aria-required="true" aria-invalid="false" required/>
-                        </div>
-                        <div class="form--item">
-                            <label for="description" class="label required">Description: </label>
-                            <textarea class="project--description" name="description" id="description" v-model.trim="project.description" @keyup="textAreaAdjust($event)" ref="description" :maxlength="limit" @focus="onWrite($event)" placeholder="Project description?"></textarea>
-                        </div>
-                        <div class="form--item">
-                            <label for="deadline" class="label required">Deadline: </label>
-                            <input type="date" name="deadline" id="deadline" v-model="project.deadline" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="dd/mm/yyyy" aria-required="true" aria-invalid="false" required/>
-                        </div>
-                        <div class="form--item">
-                            <label for="time" class="label required">Time: (00:00 to 23:59)</label>
-                            <input type="time" name="time" id="time" v-model="project.time" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="00:00" aria-required="true" aria-invalid="false" required>
-                        </div>
-                        <div class="form--item">
-                            <label for="contribution" class="label required">Contribution: </label>
-                            <select v-model="project.currency" name="currency" id="currency" class="form--item--currency" style="font-size: 1rem;">
-                                <option disabled value="">--</option>
-                                <option value="NGN">NGN</option>
-                                <option value="USD">USD</option>
-                                <option value="EURO">EURO</option>
-                                <option value="BTC">BTC</option>
-                            </select>
-                            <input type="text" name="contribution" id="contribution" v-model="project.contribution" style="width: 70%; font-size: 1rem !important;" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="30" aria-required="true" aria-invalid="false" required/>
-                        </div>
-                        <div>
-                            <button type="button" class="btn" @click="createProject()">Submit Project</button>
-                        </div>
-                    </form>
-                </div>
-            </section> -->
             <section class="projects" v-for="project in filteredProjects" :key="project.id" style="position: relative;">
                 <div class="projects--item--name">
                     <h3 class="">{{ project.name}}</h3>
-                    <div style="position: absolute; right: 0; top: 0;">
+                    <div v-if="isUser" style="position: absolute; right: 0; top: 0;">
                         <!-- <button v-if="project.owner" type="button" class="projects--icon" :class="{'projects--icon--enable': !update}" @click="updateProject()" :disabled="!update">
                             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
                                 <g transform="translate(10,70) scale(0.05,-0.05)">
@@ -114,45 +66,6 @@
                         <div>{{project.currency}} {{ project.contribution}}</div>
                     </div>
                 </div>
-                <!-- <div v-if="project.subscriptions.includes(user.id) && active != project" class="project--create--button">
-                    <button type="button" class="project--btn" @click="active = project;">Donate</button>
-                </div>
-                <hr v-if="active == project">
-                <div class="projects--donate--form" v-if="project.subscriptions.includes(user.id) && active == project">
-                    <div class="projects--donate--form--title">
-                        <h3 style="text-align: center; margin: .5rem 0">Payment Information</h3><hr>
-                        <div style="position: absolute; right: 0; top: 0;">
-                            <button type="button" class="project--icon" :class="{'project--icon--enable': create}" @click="active = ''">
-                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
-                                    <g transform="translate(10,70) scale(0.05,-0.05)">
-                                        <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
-                                    </g>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <form class="projects--form" action="" method="post">
-                        <div class="projects--donate--form--inputs">
-                            <label for="card_name">Card Name:</label>
-                            <input type="text" name="card_name" id="card_name" placeholder="JOHN DOE" aria-required="true" aria-invalid="false" required>
-                        </div>
-                        <div class="projects--donate--form--inputs">
-                            <label for="card_number">Card Number:</label>
-                            <input type="text" name="card_number" id="card_number" placeholder="0000 0000 0000 0000" aria-required="true" aria-invalid="false" required>
-                        </div>
-                        <div class="projects--donate--form--inputs">
-                            <label for="card_number">Expiration:</label>
-                            <input type="text" name="card_number" id="card_number" placeholder="mm/yy" aria-required="true" aria-invalid="false" required>
-                        </div>
-                        <div class="projects--donate--form--inputs">
-                            <label for="card_number">Security Code:</label>
-                            <input type="text" name="card_number" id="card_number" placeholder="000" aria-required="true" aria-invalid="false" required>
-                        </div>
-                        <div class="project--create--button" style="margin-left: auto; margin-right: .5rem;">
-                            <button type="button" class="project--btn" @click="onPay(project); active = '';">Make Payment</button>
-                        </div>
-                    </form>
-                </div> -->
             </section>
         </div>
 	</div>
@@ -172,7 +85,7 @@ export default {
 			menu: false,
             active: {},
             limit: 280,
-            // subscribe: false,
+            status: '',
             create: false,
             update: false,
             donate: false,
@@ -188,15 +101,30 @@ export default {
         }
     },
 	computed: {
-        ...mapGetters(['projects', 'user']),
+        ...mapGetters(['projects', 'isUser', 'user', 'message']),
         filteredProjects() {
             return this.projects.filter(project => !project.subscriptions.includes(this.user.id));
         },
     },
+    beforeMount() {
+        // this.$store.dispatch('getMessage', 'Sign in fund projects.');
+    },
     mounted() {
+        this.$store.dispatch('getMessage', 'Sign in fund projects.');
         this.timer();
+        if (this.message != '') {
+			this.status = this.message;
+			this.callFunction();
+			this.$store.dispatch('getMessage', '');
+		}
     },
     methods: {
+		callFunction: function () {
+            var v = this;
+            setTimeout(function () {
+				v.status = '';
+            }, 10000);
+        },
 		toggleMenu(val) {
 			this.menu = val;
 		},
@@ -551,6 +479,9 @@ input:-internal-autofill-selected {
 }
 /* Wider screen */
 @media screen and (min-width: 480px) {
+.projects--container {
+    padding: 1rem 20rem;;
+}
 .projects--form {
     display: flex;
     flex-wrap: wrap;

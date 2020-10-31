@@ -78,4 +78,10 @@ export default {
 .terms--list {
 	list-style-type: disc;
 }
+@media only screen and (min-width: 964px) {
+.terms {
+	padding: 1rem 20rem;
+	/* font-weight: 500; */
+}
+}
 </style>

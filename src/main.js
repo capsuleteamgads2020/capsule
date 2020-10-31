@@ -15,8 +15,14 @@ firebase.auth().onAuthStateChanged(user => {
 		.then((idTokenResult) => {
 			store.dispatch('setIdToken', idTokenResult.token);
 			store.dispatch('setIdTokenResult', idTokenResult);
-			// store.dispatch('setIsUser', idTokenResult.claims.isUser);
-			store.dispatch('setIsUser', user);
+			store.dispatch('setIsUser', idTokenResult.claims.isUser);
+			store.dispatch('setIsAdmin', idTokenResult.claims.isAdmin);
+			store.dispatch('setUser', user);
+			store.dispatch('getUserInfo', user.uid);
+			store.dispatch('getGroups');
+			store.dispatch('getProjects');
+			store.dispatch('getBookmarks');
+			store.dispatch('getNotifications');
 		}).catch((err) => {
 			return err;
 		});

@@ -1,21 +1,10 @@
 <template>
-	<div class="container" ref="" :class="{active: menu}">
-		<Header @toggleMenu="toggleMenu"></Header>
+    <div>
+	<!-- <div class="container" ref="" :class="{active: menu}"> -->
+		<!-- <Header @toggleMenu="toggleMenu"></Header> -->
 		<div class="groups--container">
             <section class="groups--title">
                 <h3 class="">Avialable Groups</h3>
-                <!-- <div style="position: absolute; right: 0; top: 0;">
-                    <button type="button" class="project--icon" :class="{'project--icon--enable': create}" @click="exitCreate()">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
-                            <g transform="translate(10,70) scale(0.05,-0.05)">
-                                <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
-                            </g>
-                        </svg>
-                    </button>
-                </div> -->
-                <!-- <div class="project--create--button">
-                    <button type="button" class="project--btn" @click="enterCreate">Create Project</button>
-                </div> -->
             </section><hr>
             <section v-if="filteredGroups" class="groups">
                 <div class="group" v-for="group in filteredGroups" :key="group.id">
@@ -45,7 +34,7 @@
                         </div>
                         <div class="group-footer">
                             <span class="rating">Rating: {{ group.rating }}</span>
-                            <button type="button" class="btn" v-if="group.members.includes(user.id)" @click="join(group)">
+                            <button type="button" class="btn" v-if="group.members.includes(user.uid)" @click="join(group)">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100">
                                     <g transform="translate(10,70) scale(0.05,-0.05)">
                                         <path fill="#ffffff" glyph-name="user-times" unicode="" d="M393 350q-89 0-152 63t-62 151 62 152 152 63 151-63 63-152-63-151-151-63z m601-179l139-138q5-6 5-13 0-8-5-13l-76-76q-5-5-12-5-8 0-13 5l-139 139-139-139q-5-5-13-5-7 0-12 5l-76 76q-5 5-5 13 0 7 5 13l139 138-139 139q-5 5-5 13 0 7 5 13l76 75q5 5 12 5 8 0 13-5l139-139 139 139q5 5 13 5 7 0 12-5l76-75q5-6 5-13 0-8-5-13z m-278 0l-101-101q-21-20-21-50 0-30 21-51l46-46q-11-2-24-2h-488q-67 0-108 39t-41 106q0 30 2 58t8 61 15 60 24 55 34 45 48 30 62 11q11 0 22-10 86-68 178-68t178 68q11 10 22 10 15 0 31-4-15-15-22-28t-8-31q0-30 21-51z" horiz-adv-x="1142.9">
@@ -54,7 +43,7 @@
                                 </svg>
                                 Leave
                             </button>
-                            <button type="button" class="btn" v-if="!group.members.includes(user.id)" @click="join(group)">
+                            <button type="button" class="btn" v-if="!group.members.includes(user.uid)" @click="join(group)">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100">
                                     <g transform="translate(10,70) scale(0.05,-0.05)">
                                         <path fill="#ffffff" glyph-name="user-plus" unicode="" d="M393 350q-89 0-152 63t-62 151 62 152 152 63 151-63 63-152-63-151-151-63z m536-71h196q7 0 13-6t5-12v-107q0-8-5-13t-13-5h-196v-197q0-7-6-12t-12-6h-107q-8 0-13 6t-5 12v197h-197q-7 0-12 5t-6 13v107q0 7 6 12t12 6h197v196q0 7 5 13t13 5h107q7 0 12-5t6-13v-196z m-411-125q0-29 21-51t50-21h143v-133q-38-28-95-28h-488q-67 0-108 39t-41 106q0 30 2 58t8 61 15 60 24 55 34 45 48 30 62 11q11 0 22-10 44-34 86-51t92-17 92 17 86 51q11 10 22 10 73 0 121-54h-125q-29 0-50-21t-21-50v-107z" horiz-adv-x="1142.9"> </path>
@@ -73,12 +62,12 @@
 
 <script>
 // @ is an alias to /src
-import Header from '@/components/partials/Header.vue'
+// import Header from '@/components/partials/Header.vue'
 import { mapGetters } from 'vuex'
 export default {
     name: 'Groups',
     components: {
-        Header,
+        // Header,
     },
     data() {
         return {
@@ -94,9 +83,9 @@ export default {
         // },
     },
     computed: {
-        ...mapGetters(['groups', 'user']),
+        ...mapGetters(['groups', 'user', 'isUser', 'userInfo']),
         filteredGroups() {
-            return this.groups.filter(group => !group.members.includes(this.user.id));
+            return this.groups.filter(group => !group.members.includes(this.user.uid));
         },
     },
     mounted() {
@@ -107,10 +96,12 @@ export default {
 			this.menu = val;
 		},
         join(group) {
-            if (!group.members.includes(this.user.id)) {
-                group.members.push(this.user.id);
+            if (!group.members.includes(this.user.uid)) {
+                group.members.push(this.user.uid);
+                this.userInfo.groups.push({id: group.id, name: group.name});
             } else {
-                group.members.splice(group.members.indexOf(this.user.id), 1);
+                group.members.splice(group.members.indexOf(this.user.uid), 1);
+                this.userInfo.groups.splice(this.userInfo.groups.findIndex(x => x.id === group.id), 1);
             }
         },
     }
@@ -118,9 +109,9 @@ export default {
 </script>
 
 <style scoped>
-.groups--container {
+/* .groups--container {
     padding: 1rem;
-}
+} */
 .groups--title {
     padding: 1rem;
 }

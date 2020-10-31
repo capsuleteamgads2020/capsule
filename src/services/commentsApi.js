@@ -4,12 +4,12 @@
 import axios from 'axios'
 
 export default {
-	async getComments (idToken) {
-		// return api().get(`comments/fetchAll`);
+	async getComments (idToken, uiser_id) {
+		// return api().get(`comments/fetchAll/${uiser_id}`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/comments/fetchAll`,
-			// url: `https://api.algoboard.com/v1/comments/fetchAll`,
+			url: `http://localhost:8080/v1/comments/fetchAll/${uiser_id}`,
+			// url: `https://api.algoboard.com/v1/comments/fetchAll/${uiser_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -42,7 +42,8 @@ export default {
 			method: 'put',
 			url: `http://localhost:8080/v1/comments/updateOne/${params.id}`,
 			// url: `https://api.algoboard.com/v1/comments/updateOne/${params.id}`,
-			data: JSON.stringify(params),
+			data: params,
+			// data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
 				'Accept': 'application/json',

@@ -2,8 +2,7 @@
   <div class="sign_up_form">
     <transition name="fade">
       <div v-if="loading" class="loading">
-        <!-- <Loader class="loader" :loading="loading"></Loader> -->
-        <!-- <Spinner :animation-duration="2500" :rhombus-size="15" color="#ff1d5e"></Spinner> -->
+        <Loader class="loader" :loading="loading"></Loader>
       </div>
     </transition>
     <div class="title">
@@ -47,13 +46,11 @@
 </template>
 
 <script>
-// import Spinner from '@/components/partials/Spinner.vue'
-// import Loader from '@/components/partials/Loader.vue'
+import Loader from '@/components/partials/Loader.vue'
 export default {
 	name: 'signup',
 	components: {
-		// Loader,
-		// Spinner,
+		Loader,
 	},
 	data () {
 		return {
@@ -119,21 +116,21 @@ export default {
 					this.loading = false;
 					this.message = 'Your sign up was successful, awaiting platform approval.';
 					this.$store.dispatch('getMessage', this.message);
-					this.$router.push({ name: 'Dashboard', params: { message: this.message } });
+					this.$router.push({ name: 'Dashboard'});
 				}
 				else {
 					this.loading = false;
 					this.message = `An email verification link has been sent to ${res.user.email}<br>Kindly verify your account to countinue using the platform.`;
-					this.$emit('message', this.message);
 					this.$store.dispatch('getMessage', this.message);
-					this.$router.push({ name: 'Home', params: { message: this.message } });
+					// this.$store.dispatch('signOut')
+					this.$router.push({ name: 'Home' });
 				}
 			})
 			.catch(err => {
 				this.loading = false;
 				this.message = err.message;
 				this.$store.dispatch('getMessage', this.message);
-				this.$router.push({ name: 'Home', params: { message: this.message } });
+				this.$router.push({ name: 'Home' });
 				return err;
 			})
 		}

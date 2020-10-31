@@ -5,38 +5,58 @@ import firebase from '../../firebaseConfig.js';
 
 const state = {
 	// Credentials
-	user: {
-        id: 'callis001',
-        full_name: 'Callis',
-        avatar: '../assets/avatar.jpeg',
-    },
-	isUser: null,
-	idToken: null,
-	idTokenResult: null,
+	user: {},
+	userInfo: {},
+	isUser: false,
+	isAdmin: false,
+	idToken: '',
+	idTokenResult: '',
 };
 
 const getters = {
 	user: state => state.user,
+	userInfo: state => state.userInfo,
 	isUser: state => state.isUser,
+	isAdmin: state => state.isAdmin,
 	idToken: state => state.idToken,
 	idTokenResult: state => state.idTokenResult,
 };
 
 const actions = {
-	async getUser({ commit, getters }, payload) {
+	async setUser({ commit }, user) {
 		// api call
-		return authApi.getUser(payload.id, getters.idToken)
-			.then(res => {
-				commit('SET_USER', res.data)
-				return res.data;
-			})
-			.catch( err => {
-				return err;
-			});
+		commit('SET_USER', user)
+	},
+	async addUser({getters},payload) {
+		await authApi.addUser({
+			id: getters.user.uid,
+			email: payload.email,
+			name: payload.name,
+			phone: payload.phone,
+			imageUrl: '',
+			created_at: payload.created_at,
+			status: payload.status
+		});
+		// commit('SET_USER', user);
+	},
+	async getUserInfo({ commit, getters }, payload) {
+		// api call
+		return authApi.getUser(getters.idToken, payload)
+		.then(res => {
+			commit('SET_USER_INFO', res.data);
+			return res.data;
+		})
+		.catch( err => {
+			return err;
+		});
 	},
 	async setIsUser({ commit }, isUser) {
 		// api call
 		commit('SET_IS_USER', isUser);
+	},
+	async setIsAdmin({ commit }, isAdmin) {
+		// api call
+		commit('SET_IS_ADMIN', isAdmin);
 	},
 	async setIdToken({ commit }, idToken) {
 		// api call
@@ -48,50 +68,51 @@ const actions = {
 	},
 	async signUp({commit}, payload) {
 		return firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-		.then( async (isUser) => {
+		.then( async (user) => {
 			await firebase.auth().currentUser.sendEmailVerification();
 			await firebase.auth().currentUser.updateProfile({
 				displayName: payload.name,
 				phoneNumber: payload.phone,
 				photoURL: 'https://firebasestorage.googleapis.com/v0/b/dev-capsule.appspot.com/o/avatar.jpeg?alt=media&token=55f88f28-76c8-4670-8caa-e08267b096fa',
 			});
+			// commit('SET_USER', user);
 			if (firebase.auth().currentUser.emailVerified) {
-				commit('SET_IS_USER', isUser);
-				// commit('SET_USER', user);
+				// commit('SET_IS_USER', user);
+				commit('SET_USER', user);
 			}
-			// await authApi.addUser({
-			// 	id: user.user.uid,
-			// 	email: payload.email,
-			// 	name: payload.name,
-			// 	phone: payload.phone,
-			// 	imageUrl: '',
-			// 	created_at: payload.created_at,
-			// 	status: payload.status
-			// });
-			return isUser;
+			await authApi.addUser({
+				id: user.user.uid,
+				email: payload.email,
+				name: payload.name,
+				phone: payload.phone,
+				imageUrl: '',
+				created_at: payload.created_at,
+				status: payload.status
+			});
+			return user;
 		})
 		.catch(error => {
 			return error;
 		});
 	},
-	async signIn ({ commit }, payload) {
+	async signIn ({ commit, dispatch }, payload) {
 		// this.loading = true
 		return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-		.then( isUser => {
-			// var payload = {'id': user.uid};
-			// dispatch('getUser', {'id': user.uid});
-			commit('SET_IS_USER', isUser);
-			// firebase.auth().onAuthStateChanged(user => {
-			// 	user.getIdToken(/* forceRefresh */ )
-			// 	.then(idToken => {
-			// 		commit('SET_ID_TOKEN', idToken);
-			// 		commit('SET_USER', user);
-			// 	})
-			// 	.catch(err => {
-			// 		return err;
-			// 	});
-			// })
-			return isUser;
+		.then( user => {
+			if (user && firebase.auth().currentUser.emailVerified) {
+				firebase.auth().onAuthStateChanged(user => {
+					user.getIdToken(/* forceRefresh */ )
+					.then(idToken => {
+						commit('SET_ID_TOKEN', idToken);
+						// commit('SET_USER', user);
+						dispatch('getUserInfo', user.user.uid);
+					})
+					.catch(err => {
+						return err;
+					});
+				})
+			}
+			return user;
 		});
 	},
 	async signOut ({ commit }) {
@@ -103,7 +124,6 @@ const actions = {
 			commit('SET_ID_TOKEN_RESULT', null);
 			commit('SIGN_OUT');
 		}).catch(err => {
-			// console.log(err)
 			return err;
 		})
 	},
@@ -113,8 +133,14 @@ const mutations = {
 	SET_USER(state, user) {
 		state.user = user;
 	},
+	SET_USER_INFO(state, userInfo) {
+		state.userInfo = userInfo;
+	},
 	SET_IS_USER(state, isUser) {
 		state.isUser = isUser;
+	},
+	SET_IS_ADMIN(state, isAdmin) {
+		state.isAdmin = isAdmin;
 	},
 	SET_ID_TOKEN(state, idToken) {
 		state.idToken = idToken;
@@ -123,10 +149,18 @@ const mutations = {
 		state.idTokenResult = idTokenResult;
 	},
 	SIGN_OUT(state) {
-		state.idToken = null;
-		state.idTokenResult = null;
-		state.user = null;
-		state.isUser = null;
+		// commit('SET_USER', {})
+		// commit('SET_IS_USER', false);
+		// commit('SET_IS_ADMIN', false);
+		// commit('SET_ID_TOKEN', '');
+		// commit('SET_ID_TOKEN_RESULT', '');
+		// commit('SET_USER_INFO', {});
+		state.idToken = '';
+		state.idTokenResult = '';
+		state.user = {};
+		state.isUser = false;
+		state.isAdmin = false;
+		state.userInfo = {};
 	},
 };
 

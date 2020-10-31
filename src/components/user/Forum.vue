@@ -1,13 +1,14 @@
 <template>
-	<div class="container" ref="" :class="{active: menu}">
+	<div>
+	<!-- <div class="container" ref="" :class="{active: menu}">
 		<Header @toggleMenu="toggleMenu"></Header>
-		<div class="forum">
+		<div class="forum"> -->
 			<div class="forum--container">
 				<section class="comment" :class="{ active: !isReplying }">
 					<div class="comment--avatar">
 						<router-link class="link--item home" :to="{ name: 'Home' }">
 							<!-- <img :src="user.avatar" :alt="user.full_name" width= 400 onerror="this.onerror=null;this.src='../assets/avatar.jpeg';" style="border-radius: 9999px; max-height: 4rem; width: 4rem;"/> -->
-							<img src="../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
+							<img src="../../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
 						</router-link>
 					</div>
 					<div class="comment--content">
@@ -84,7 +85,7 @@
 						<div class="comments--profile">
 							<div class="comments--profile--avatar">
 								<router-link class="link--item home" :to="{ name: 'Home' }">
-									<img src="../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
+									<img src="../../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
 									<!-- <img :src="comment.avatar" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;"> -->
 								</router-link>
 							</div>
@@ -151,7 +152,7 @@
 						<div class="reply--avatar">
 							<router-link class="link--item home" :to="{ name: 'Home' }">
 								<!-- <img :src="user.avatar" :alt="user.full_name" width= 400 onerror="this.onerror=null;this.src='../assets/avatar.jpeg';" style="border-radius: 9999px; max-height: 4rem; width: 4rem;"/> -->
-								<img src="../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
+								<img src="../../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
 							</router-link>
 						</div>
 						<div class="reply--content">
@@ -220,7 +221,7 @@
 						<section class="replies" :class="{ active: active == comment }" v-for="reply in comment.replies" :key="reply.id" style="border-top: 1px solid #DFAB24;">
 							<div class="replies--avatar">
 								<router-link class="link--item home" :to="{ name: 'Home' }">
-									<img src="../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
+									<img src="../../assets/avatar.jpeg" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;">
 									<!-- <img :src="comment.avatar" alt="Avatar" style="border-radius: 9999px; max-height: 4rem; width: 4rem;"> -->
 								</router-link>
 							</div>
@@ -268,18 +269,18 @@
 				</section>
 					
 			</div>
-		</div>
+		<!-- </div> -->
 	</div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Header from '@/components/partials/Header.vue'
+// import Header from '@/components/partials/Header.vue'
 import { mapGetters } from 'vuex'
 export default {
 	name: 'Forum',
 	components: {
-		Header,
+		// Header,
 	},
 	props: {
 	},
@@ -508,7 +509,7 @@ export default {
 	display: block;
 }
 .forum {
-	padding: 1rem;
+	/* padding: 1rem; */
 	/* display: flex; */
 }
 .forum--container {

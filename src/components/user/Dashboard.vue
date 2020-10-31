@@ -10,7 +10,7 @@
 			<section class="profile">
 				<div class="avatar">
 					<router-link class="link--item home" :to="{ name: 'Dashboard' }">
-						<img :alt="user.full_name" src="../assets/avatar.jpeg">
+						<img :alt="user.displayName" src="../../assets/avatar.jpeg">
 					</router-link>
 				</div>
 				<div class="icon--container">
@@ -78,6 +78,16 @@
 						</svg>
 						<!-- <span>Settings</span> -->
 					</button>
+					<button class="forums" @click="enableForums">
+						<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 55" class="icon">
+							<title>Forum</title>
+							<g transform="translate(10,70) scale(0.05,-0.05)">
+								<path class="forum--icon" glyph-name="comment-empty" unicode="" d="M500 636q-114 0-213-39t-157-105-59-142q0-62 40-119t113-98l48-28-15-54q-13-50-39-96 85 36 154 96l24 21 31-3q39-5 73-5 114 0 213 39t157 105 59 142-59 142-157 105-213 39z m500-286q0-97-67-179t-182-130-251-48q-39 0-81 4-110-97-257-135-27-8-63-12h-3q-8 0-15 6t-9 15v1q-2 2 0 6t1 6 2 5l4 5t4 5 4 5q4 5 17 19t20 22 17 22 18 28 15 33 15 42q-88 50-138 123t-51 157q0 97 67 179t182 130 251 48 251-48 182-130 67-179z" horiz-adv-x="1000"> </path>
+							</g>
+							<text x="0" y="100" fill="#DFAB24">Forums</text>
+							<line v-if="isForums" x1="0" y1="105" x2="64" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
+						</svg>
+					</button>
 					<button class="bookmarks" @click="enableBookmarks">
 						<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 55" class="icon">
 							<title>Bookmarks</title>
@@ -114,6 +124,9 @@
 			<section v-if="isSettings">
 				<Settings></Settings>
 			</section>
+			<section v-if="isForums">
+				<Forum></Forum>
+			</section>
 			<section v-if="isBookmarks">
 				<Bookmarks></Bookmarks>
 			</section>
@@ -129,6 +142,7 @@
 import Header from '@/components/partials/Header.vue'
 import Notifications from '@/components/user/Notifications.vue'
 import Group from '@/components/user/Group.vue'
+import Forum from '@/components/user/Forum.vue'
 import Settings from '@/components/user/Settings.vue'
 import Bookmarks from '@/components/user/Bookmarks.vue'
 import Project from '@/components/user/Project.vue'
@@ -141,6 +155,7 @@ export default {
 		Notifications,
 		Group,
 		Settings,
+		Forum,
 		Bookmarks,
 		Project,
 	},
@@ -151,29 +166,27 @@ export default {
 			isNotification: true,
 			isGroup: false,
 			isSettings: false,
+			isForums: false,
 			isBookmarks: false,
 			isProject: false,
-			// notifications: '',
-			// groups: '',
 			menu: false,
 			status: '',
 		}
 	},
 	computed: {
-		...mapGetters(['notifications', 'bookmarks', 'groups', 'user', 'message']),
-		// ...mapState(['bookmarks', 'auth']),
+		...mapGetters(['notifications', 'bookmarks', 'groups', 'isUser', 'user', 'userInfo', 'message']),
 		unreadNotifications() {
 			return this.notifications.filter(notification => notification.read == false).length;
 		},
 		filteredGroups() {
-            return this.groups.filter(group => group.members.includes(this.user.id)).length;
+            return this.groups.filter(group => !!group.members.length && group.members.includes(this.user.uid)).length;
         },
 	},
 	mounted(){
 		if (this.message != '') {
 			this.status = this.message;
 			this.callFunction();
-			this.$store.dispatch('getMessage', this.message = '');
+			this.$store.dispatch('getMessage', '');
 		}
 	},
 	methods: {
@@ -201,6 +214,7 @@ export default {
 				this.isSettings = false;
 				this.isBookmarks = false;
 				this.isProject = false;
+				this.isForums = false;
 			}
 		},
 		enableGroup() {
@@ -212,6 +226,7 @@ export default {
 				this.isSettings = false;
 				this.isBookmarks = false;
 				this.isProject = false;
+				this.isForums = false;
 			}
 		},
 		enableSettings() {
@@ -223,6 +238,19 @@ export default {
 				this.isGroup = false;
 				this.isBookmarks = false;
 				this.isProject = false;
+				this.isForums = false;
+			}
+		},
+		enableForums() {
+			if (this.isForums) {
+				return;
+			} else {
+				this.isForums = true;
+				this.isBookmarks = false;
+				this.isSettings = false;
+				this.isNotification = false;
+				this.isGroup = false;
+				this.isProject = false;
 			}
 		},
 		enableBookmarks() {
@@ -230,6 +258,7 @@ export default {
 				return;
 			} else {
 				this.isBookmarks = true;
+				this.isForums = false;
 				this.isSettings = false;
 				this.isNotification = false;
 				this.isGroup = false;
@@ -274,7 +303,7 @@ export default {
 	/* border-bottom: 1px solid #DFAB24; */
     display: flex;
 }
-.notification, .group, .setting, .bookmarks, .project {
+.notification, .group, .setting, .forums, .bookmarks, .project {
 	margin-left: 0.5rem;
 	font-size: 0.8rem;
 	display: flex;
@@ -296,16 +325,26 @@ export default {
 .profile--icon {
     fill: #DFAB24;
 }
+.forum--icon {
+	fill: #DFAB24;
+}
 .bookmark--icon {
 	fill: #DFAB24;
 }
 .project--icon {
 	fill: #DFAB24;
 }
+
 @media screen and (min-width: 480px) {
 .icon {
 	width: 100px;
 	height: 170px;
+}
+/* Wider screen */
+@media screen and (min-width: 940px) {
+.dashboard {
+	padding: 1rem 20rem;
+}
 }
 }
 </style>

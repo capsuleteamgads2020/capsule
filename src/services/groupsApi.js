@@ -5,6 +5,7 @@ import axios from 'axios'
 
 export default {
 	async getGroups (idToken) {
+		// console.log(idToken);
 		// return api().get(`groups/fetchAll`);
 		const res = await axios({
 			method: 'get',
@@ -20,13 +21,15 @@ export default {
 		return res;
 	},
 	async addGroup (idToken, params) {
+		// console.log(params);
+		// console.log(idToken);
 		// return api().post(`groups/addOne`, params);
 		const res = await axios({
 			method: 'post',
 			url: `http://localhost:8080/v1/groups/addOne`,
 			// url: `https://api.algoboard.com/v1/groups/addOne`,
-			// data: params,
-			params: params,
+			data: params,
+			// params: params,
 			headers: { 
 				'content-type': 'application/json', 
 				'Accept': 'application/json',

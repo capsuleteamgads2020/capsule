@@ -8,24 +8,8 @@
 			</section>
 			<section class="about--description">
 				<p>
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit ratione numquam repellat odio, laudantium accusantium. 
-					Culpa, voluptates ipsam quidem voluptatibus quae dignissimos dolor voluptate delectus. Nulla libero aut esse rem.
+					Capsule bring together individuals of like minds and similar illnesses to pull together their resurces, 
+					information and funds to actualize their target. Members agree on what to fund and a project is created.
 				</p>
 			</section>
 			<section>
@@ -250,10 +234,10 @@ input[type=text]:focus {
 }
 
 @media only screen and (min-width: 964px) {
-/* .about {
-	text-align: center;
-	font-weight: 500;
-} */
+.about {
+	padding: 1rem 20rem;
+	/* font-weight: 500; */
+}
 .btn {
 	border: 0.1rem solid #f2ecec;
 	background-color: #DFAB24;

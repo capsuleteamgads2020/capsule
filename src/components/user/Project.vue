@@ -30,6 +30,13 @@
 						<textarea class="project--description" name="description" id="description" v-model.trim="project.description" @keyup="textAreaAdjust($event)" ref="description" :maxlength="limit" @focus="onWrite($event)" placeholder="Project description?"></textarea>
                     </div>
                     <div class="form--item">
+                        <label for="group_id" class="label required">Group: </label>
+                        <select v-model="project.group_id" name="group_id" id="group_id" class="form--item--group" style="font-size: 1rem;" required>
+                            <option disabled value="">--</option>
+                            <option :value="group.id" v-for="group in groups" :key="group.value">{{group.name}}</option>
+                        </select>
+                    </div>
+                    <div class="form--item">
                         <label for="deadline" class="label required">Deadline: </label>
                         <input type="date" name="deadline" id="deadline" v-model="project.deadline" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="dd/mm/yyyy" aria-required="true" aria-invalid="false" required/>
                     </div>
@@ -66,7 +73,7 @@
                             </g>
                         </svg>
                     </button>
-                    <button v-if="!project.owner && !project.subscriptions.includes(user.id)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
+                    <button v-if="!project.owner && !project.subscriptions.includes(user.uid)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
                             <g transform="translate(10,70) scale(0.05,-0.05)">
                                 <path fill="#000000" glyph-name="bell-alt" unicode="" d="M509-96q0 8-9 8-33 0-57 24t-23 57q0 9-9 9t-9-9q0-41 29-70t69-28q9 0 9 9z m455 160q0-29-21-50t-50-21h-250q0-59-42-101t-101-42-101 42-42 101h-250q-29 0-50 21t-21 50q28 24 51 49t47 67 42 89 27 114 11 146q0 84 66 157t171 89q-5 10-5 21 0 23 16 38t38 16 38-16 16-38q0-11-5-21 106-16 171-89t66-157q0-78 11-146t27-114 42-89 47-67 51-49z" horiz-adv-x="1000"> </path>
@@ -74,7 +81,7 @@
                         </svg>
                         Subscribe
                     </button>
-                    <button v-if="!project.owner && project.subscriptions.includes(user.id)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
+                    <button v-if="!project.owner && project.subscriptions.includes(user.uid)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
                             <g transform="translate(10,70) scale(0.05,-0.05)">
                                 <path fill="#000000" glyph-name="bell-off" unicode="" d="M869 375q34-199 167-311 0-29-22-50t-50-21h-250q0-59-42-101t-101-42-100 42-42 100z m-298-480q9 0 9 9t-9 8q-32 0-56 24t-24 57q0 9-9 9t-9-9q0-41 29-70t69-28z m560 892q4-5 4-13t-6-12l-1045-905q-5-5-13-4t-12 6l-47 53q-4 6-4 14t6 12l104 89q-11 18-11 37 28 24 51 49t47 67 42 89 28 114 11 146q0 84 65 157t171 89q-4 10-4 21 0 23 15 38t38 16 38-16 16-38q0-11-4-21 69-10 122-46t82-88l234 202q5 5 13 4t12-6z" horiz-adv-x="1142.9"> </path>
@@ -102,11 +109,11 @@
                     <div>{{project.currency}} {{ project.contribution}}</div>
                 </div>
             </div>
-            <div v-if="project.subscriptions.includes(user.id) && active != project" class="project--create--button">
+            <div v-if="project.subscriptions.includes(user.uid) && active != project" class="project--create--button">
                 <button type="button" class="project--btn" @click="active = project;">Donate</button>
             </div>
             <hr v-if="active == project">
-            <div class="projects--donate--form" v-if="project.subscriptions.includes(user.id) && active == project">
+            <div class="projects--donate--form" v-if="project.subscriptions.includes(user.uid) && active == project">
                 <div class="projects--donate--form--title">
                     <h3 style="text-align: center; margin: .5rem 0">Payment Information</h3><hr>
                     <div style="position: absolute; right: 0; top: 0;">
@@ -166,14 +173,18 @@ export default {
                 contribution: '',
                 currency: '',
                 active: true,
+                group_id: '',
             },
         }
     },
 	computed: {
-        ...mapGetters(['projects', 'user']),
+        ...mapGetters(['projects', 'isAdmin', 'isUser', 'user', 'userInfo']),
         filteredProjects() {
-            return this.projects.filter(project => project.subscriptions.includes(this.user.id));
+            return this.projects.filter(project => project.subscriptions.includes(this.user.uid));
         },
+        groups() {
+            return this.userInfo.groups;
+        }
     },
     mounted() {
         this.timer();
@@ -224,14 +235,14 @@ export default {
 			}
         },
         subscribe(project) {
-            if (!project.subscriptions.includes(this.user.id)) {
-                project.subscriptions.push(this.user.id);
+            if (!project.subscriptions.includes(this.user.uid)) {
+                project.subscriptions.push(this.user.uid);
             } else {
-                project.subscriptions.splice(project.subscriptions.indexOf(this.user.id), 1);
+                project.subscriptions.splice(project.subscriptions.indexOf(this.user.uid), 1);
             }
         },
         // removeSubscription(project) {
-        //     project.subscriptions.splice(project.subscriptions.indexOf(this.user.id), 1);
+        //     project.subscriptions.splice(project.subscriptions.indexOf(this.user.uid), 1);
         //     this.subscribe = !this.subscribe
         // },
         onDonate() {
@@ -243,8 +254,8 @@ export default {
         createProject() {
             // delete project id
             this.projects.push({
-                // id: Date.now() + '_' + this.user.id,
-                owner: [{'id': this.user.id, 'name': this.user.full_name}],
+                owner: [{'id': this.user.uid, 'name': this.user.displayName}],
+                group_id: this.project.group_id,
                 name: this.project.name,
                 description: this.project.description,
                 deadline: this.project.deadline,
@@ -347,6 +358,14 @@ export default {
 	border-radius: 5px;
 	width: 100%;
 	position: relative;
+}
+.form--item--group {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid;
+    padding: 0.45rem;
+    font-size: 1rem !important;
 }
 .form--item--currency {
     width: 30%;

@@ -20,11 +20,11 @@ export default {
 	// 	return res;
 	// },
 	async addUser (params) {
-		// return api().post(`users/addOne`, params);
+		// return api().post(`users/addOne/${params.id}`, params);
 		const res = await axios({
 			method: 'post',
-			url: `http://localhost:8080/v1/users/addOne`,
-			// url: `https://api.algoboard.com/v1/users/addOne`,
+			// url: `http://localhost:8080/v1/users/addOne/${params.id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/addOne/${params.id}`,
 			data: params,
 			headers: { 
 				'content-type': 'application/json', 
@@ -55,8 +55,8 @@ export default {
 		// return api().get(`users/fetchOne/${user_id}`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/projects/fetchOne/${user_id}`,
-			// url: `https://api.algoboard.com/v1/users/fetchOne/${user_id}`,
+			url: `http://localhost:8080/v1/users/fetchOne/${user_id}`,
+			// url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/fetchOne/${user_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
