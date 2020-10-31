@@ -11,6 +11,7 @@ Vue.config.productionTip = false
 let app
 firebase.auth().onAuthStateChanged(user => {
 	if (user && user.emailVerified) {
+		store.dispatch('getUserInfo', {tok: user.ya, uid: user.uid});
 		user.getIdTokenResult()
 		.then((idTokenResult) => {
 			store.dispatch('setIdToken', idTokenResult.token);
@@ -18,14 +19,12 @@ firebase.auth().onAuthStateChanged(user => {
 			store.dispatch('setIsUser', idTokenResult.claims.isUser);
 			store.dispatch('setIsAdmin', idTokenResult.claims.isAdmin);
 			store.dispatch('setUser', user);
-			store.dispatch('getUserInfo', user.uid);
-			store.dispatch('getGroups');
-			store.dispatch('getProjects');
-			store.dispatch('getBookmarks');
-			store.dispatch('getNotifications');
+			// store.dispatch('getUserInfo', user.uid);
 		}).catch((err) => {
 			return err;
 		});
+	} else {
+		store.dispatch('getGroups');
 	}
 
 	if (!app) {

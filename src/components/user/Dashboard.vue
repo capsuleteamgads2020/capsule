@@ -27,9 +27,9 @@
 									24 56 65t26 73z m71 21v-607q0-37-26-63t-63-27h-822q-36 0-63 27t-26 63v607q0 37 26 63t63 26h822q37 0 63-26t26-63z" horiz-adv-x="1000">
 								</path>
 							</g>
-							<circle v-if="notifications" cx="55" cy="35" r="10" stroke="#ff0000" stroke-width="3" fill="#ff0000"></circle>
+							<circle v-if="unreadNotifications" cx="55" cy="35" r="10" stroke="#ff0000" stroke-width="3" fill="#ff0000"></circle>
 							<!-- <text v-if="notifications" x="52" y="38" fill="#ffffff">{{ notifications }}</text> -->
-							<text v-if="notifications" :x="x" :y="y" fill="#ffffff">{{ unreadNotifications }}</text>
+							<text v-if="unreadNotifications" :x="x" :y="y" fill="#ffffff">{{ unreadNotifications }}</text>
 							<text x="2" y="100" fill="#DFAB24">Notification</text>
 							<line v-if="isNotification" x1="0" y1="105" x2="70" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
 							<!-- <line x1="0" y1="100" x2="200" y2="100" style="stroke:rgb(255,0,0);stroke-width:4" /> -->
@@ -173,32 +173,38 @@ export default {
 			status: '',
 		}
 	},
+    watch: {
+        filteredGroups: {
+			handler() {
+				this.notification();
+			}
+        },
+    },
 	computed: {
 		...mapGetters(['notifications', 'bookmarks', 'groups', 'isUser', 'user', 'userInfo', 'message']),
 		unreadNotifications() {
 			return this.notifications.filter(notification => notification.read == false).length;
 		},
 		filteredGroups() {
-            return this.groups.filter(group => !!group.members.length && group.members.includes(this.user.uid)).length;
+			// console.log(this.userInfo)
+            return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id)).length;
         },
 	},
-	mounted(){
-		if (this.message != '') {
-			this.status = this.message;
-			this.callFunction();
-			this.$store.dispatch('getMessage', '');
-		}
+	mounted() {
+		this.notification();
+		this.$store.dispatch('getGroups');
 	},
 	methods: {
 		toggleMenu(val) {
 			this.menu = val;
 		},
-		// notification(val) {
-		// 	this.notifications = val;
-		// },
-		// group(val) {
-		// 	this.groups = val;
-		// },
+		notification() {
+			if (this.message != '') {
+				this.status = this.message;
+				this.callFunction();
+				this.$store.dispatch('getMessage', '');
+			}
+		},
 		callFunction: function () {
             var v = this;
             setTimeout(function () {
@@ -319,7 +325,7 @@ export default {
 	height: 55px;
 } */
 .icon {
-	width: 50px;
+	width: 40px;
 	height: 100px;
 }
 .profile--icon {
@@ -337,8 +343,8 @@ export default {
 
 @media screen and (min-width: 480px) {
 .icon {
-	width: 100px;
-	height: 170px;
+	width: 80px;
+	height: 150px;
 }
 /* Wider screen */
 @media screen and (min-width: 940px) {

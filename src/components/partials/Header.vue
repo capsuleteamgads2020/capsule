@@ -89,7 +89,7 @@ export default {
 			this.$store.dispatch('signOut')
 			.then(() => {
 				// Sign-out successful.
-				this.message = 'Your sign out was successfully!!!';
+				this.message = 'Your sign out was successful!!!';
 				// this.$emit('message', this.message);
 				this.$store.dispatch('getMessage', this.message);
 				this.$router.push({name: 'Account'});

@@ -94,13 +94,14 @@ const actions = {
 			})
 		}
     },
-    async getGroups({ state, commit, rootGetters }) {
+    async getGroups({  commit }) {
         // api call
+        // console.log('here')
         if (state.groups && state.groups.length > 0) {
 			return state.groups;
 		}
-
-		return groupsApi.getGroups(rootGetters.idToken)
+        
+		return groupsApi.getGroups()
 		.then(res => {
 			commit('GET_GROUPS', res.data);
 			return res.data;

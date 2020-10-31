@@ -123,7 +123,10 @@ export default {
 					this.message = `An email verification link has been sent to ${res.user.email}<br>Kindly verify your account to countinue using the platform.`;
 					this.$store.dispatch('getMessage', this.message);
 					// this.$store.dispatch('signOut')
-					this.$router.push({ name: 'Home' });
+					this.user = '';
+					// return;
+					this.$router.push('/Account');
+					// this.$router.push({ name: 'Home' });
 				}
 			})
 			.catch(err => {
