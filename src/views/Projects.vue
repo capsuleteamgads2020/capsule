@@ -2,7 +2,7 @@
 	<div class="container" ref="" :class="{active: menu}">
 		<Header @toggleMenu="toggleMenu"></Header>
         <div class="projects--container">
-			<div v-if="status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
+			<div v-if="!isUser && status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
             <section class="project--title">
                 <h3 class="">Avialable Projects</h3>
                 <!-- <div style="position: absolute; right: 0; top: 0;">

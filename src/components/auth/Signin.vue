@@ -110,7 +110,7 @@ export default {
 			})
 			.then(async (res) => {
 				if (res.user && res.user.emailVerified) {
-					this.message = 'Your sign in was successfully!!!';
+					this.message = 'Your sign in was successful!!!';
 					this.$store.dispatch('getMessage', this.message);
 					this.loading = false;
 					await this.$router.push(this.$route.query.redirect || '/dashboard');

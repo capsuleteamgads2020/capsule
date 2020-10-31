@@ -1,85 +1,85 @@
 <template>
     <div class="group--container">
-        <div>
-            <section v-if="isAdmin" class="group--create">
-                <div class="group--create--button">
-                    <button type="button" class="group--btn" @click="enterCreate">Create Group</button>
+        <!-- <div> -->
+        <section v-if="isAdmin" class="group--create">
+            <div class="group--create--button">
+                <button type="button" class="group--btn" @click="enterCreate">Create Group</button>
+            </div>
+        </section>
+        <section v-if="create" class="group">
+            <div class="group--title">
+                <h3 class="">Create a Group</h3>
+                <div style="position: absolute; right: 0; top: 0;">
+                    <button type="button" class="group--icon" :class="{'group--icon--enable': create}" @click="exitCreate()">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
+                            <g transform="translate(10,70) scale(0.05,-0.05)">
+                                <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
+                            </g>
+                        </svg>
+                    </button>
                 </div>
-            </section>
-            <section v-if="create" class="group">
-                <div class="group--title">
-                    <h3 class="">Create a Group</h3>
-                    <div style="position: absolute; right: 0; top: 0;">
-                        <button type="button" class="group--icon" :class="{'group--icon--enable': create}" @click="exitCreate()">
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
-                                <g transform="translate(10,70) scale(0.05,-0.05)">
-                                    <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
-                                </g>
-                            </svg>
-                        </button>
+            </div>
+            <hr>
+            <div>
+                <form action="">
+                    <div class="form--item">
+                        <label for="name" class="label required">Group Name: </label>
+                        <input type="text" name="name" id="name" v-model="group.name" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Group name" aria-required="true" aria-invalid="false" required/>
                     </div>
-                </div>
-                <hr>
-                <div>
-                    <form action="">
-                        <div class="form--item">
-                            <label for="name" class="label required">Group Name: </label>
-                            <input type="text" name="name" id="name" v-model="group.name" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Group name" aria-required="true" aria-invalid="false" required/>
-                        </div>
-                        <div class="form--item">
-                            <label for="description" class="label required">Group Description: </label>
-                            <textarea class="group--description" name="description" id="description" v-model.trim="group.description" @keyup="textAreaAdjust($event)" ref="description" :maxlength="limit" @focus="onWrite($event)" placeholder="Group description"></textarea>
-                        </div>
+                    <div class="form--item">
+                        <label for="description" class="label required">Group Description: </label>
+                        <textarea class="group--description" name="description" id="description" v-model.trim="group.description" @keyup="textAreaAdjust($event)" ref="description" :maxlength="limit" @focus="onWrite($event)" placeholder="Group description"></textarea>
+                    </div>
+                    <div class="group--title">
+                        <h3 class="">Partner Organisation</h3>
+                    </div>
+                    <div style="border: 1px solid #000000; margin-bottom: 10px;" v-for="(partner, counter) in partners" :key="counter">
                         <div class="group--title">
-                            <h3 class="">Partner Organisation</h3>
-                        </div>
-                        <div style="border: 1px solid #000000; margin-bottom: 10px;" v-for="(partner, counter) in partners" :key="counter">
-                            <div class="group--title">
-                                <h3 class="">Partner {{counter+1}}</h3>
-                                <div style="position: absolute; right: 0; top: 0;">
-                                    <button type="button" class="group--icon" :class="{'group--icon--enable': create}" @click="deletePartner()">
-                                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
-                                            <g transform="translate(10,70) scale(0.05,-0.05)">
-                                                <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
-                                            </g>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div><hr>
-                            <div class="form--item">
-                                <label for="partner_name" class="label">Name: </label>
-                                <input type="text" name="partner_name" id="partner_name" v-model="partner.name" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Name" aria-invalid="false"/>
-                            </div>
-                            <div class="form--item">
-                                <label for="partner_email" class="label">Email: </label>
-                                <input type="text" name="partner_email" id="partner_email" v-model="partner.email" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Email" aria-invalid="false"/>
-                            </div>
-                            <div class="form--item">
-                                <label for="partner_phone" class="label">Phone Number: </label>
-                                <input type="tel" name="partner_phone" id="partner_phone" v-model="partner.phone" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="+234 800 000 0000" aria-invalid="false"/>
-                            </div>
-                        </div>
-                        <div style="position: relative; margin-bottom: 3rem;">
+                            <h3 class="">Partner {{counter+1}}</h3>
                             <div style="position: absolute; right: 0; top: 0;">
-                                <button type="button" class="group--icon" :class="{'group--icon--enable': create}" @click="addPartner()">
+                                <button type="button" class="group--icon" :class="{'group--icon--enable': create}" @click="deletePartner()">
                                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
                                         <g transform="translate(10,70) scale(0.05,-0.05)">
-                                            <path fill="#000000" glyph-name="plus" unicode="" d="M786 439v-107q0-22-16-38t-38-15h-232v-233q0-22-16-37t-38-16h-107q-22 0-38 16t-15 37v233h-232q-23 0-38 15t-16 38v107q0 23 16 38t38 16h232v232q0 22 15 38t38 16h107q23 0 38-16t16-38v-232h232q22 0 38-16t16-38z" horiz-adv-x="785.7"> </path>
+                                            <path fill="#000000" glyph-name="cancel" unicode="" d="M724 112q0-22-15-38l-76-76q-16-15-38-15t-38 15l-164 165-164-165q-16-15-38-15t-38 15l-76 76q-16 16-16 38t16 38l164 164-164 164q-16 16-16 38t16 38l76 76q16 16 38 16t38-16l164-164 164 164q16 16 38 16t38-16l76-76q15-15 15-38t-15-38l-164-164 164-164q15-15 15-38z" horiz-adv-x="785.7"> </path>
                                         </g>
                                     </svg>
                                 </button>
                             </div>
+                        </div><hr>
+                        <div class="form--item">
+                            <label for="partner_name" class="label">Name: </label>
+                            <input type="text" name="partner_name" id="partner_name" v-model="partner.name" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Name" aria-invalid="false"/>
                         </div>
-                        <div>
-                            <button type="button" class="btn" @click="createGroup()">Submit group</button>
+                        <div class="form--item">
+                            <label for="partner_email" class="label">Email: </label>
+                            <input type="text" name="partner_email" id="partner_email" v-model="partner.email" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="Email" aria-invalid="false"/>
                         </div>
-                    </form>
-                </div>
-            </section>
-        </div>
-        <div v-if="groups">
-            <section v-for="group in filteredGroups" :key="group.id">
-                <div class="group">
+                        <div class="form--item">
+                            <label for="partner_phone" class="label">Phone Number: </label>
+                            <input type="tel" name="partner_phone" id="partner_phone" v-model="partner.phone" @focus="onFocus($event)" @blur="onBlur($event)" placeholder="+234 800 000 0000" aria-invalid="false"/>
+                        </div>
+                    </div>
+                    <div style="position: relative; margin-bottom: 3rem;">
+                        <div style="position: absolute; right: 0; top: 0;">
+                            <button type="button" class="group--icon" :class="{'group--icon--enable': create}" @click="addPartner()">
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
+                                    <g transform="translate(10,70) scale(0.05,-0.05)">
+                                        <path fill="#000000" glyph-name="plus" unicode="" d="M786 439v-107q0-22-16-38t-38-15h-232v-233q0-22-16-37t-38-16h-107q-22 0-38 16t-15 37v233h-232q-23 0-38 15t-16 38v107q0 23 16 38t38 16h232v232q0 22 15 38t38 16h107q23 0 38-16t16-38v-232h232q22 0 38-16t16-38z" horiz-adv-x="785.7"> </path>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn" @click="createGroup()">Submit group</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!-- </div> -->
+        <section v-if="!!filteredGroups.length">
+            <div v-for="group in filteredGroups" :key="group.id" class="group">
+                <!-- <div class="group"> -->
                     <div class="group-preview">
                         <h6>Group</h6>
                         <h2>{{ group.name }}</h2>
@@ -106,7 +106,7 @@
                         </div>
                         <div class="group-footer">
                             <span class="rating">Rating: {{ group.rating }}</span>
-                            <button type="button" class="btn" v-if="group.members.includes(user.uid)" @click="join(group)">
+                            <button type="button" class="btn" @click="Leave(group)">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100">
                                     <g transform="translate(10,70) scale(0.05,-0.05)">
                                         <path fill="#ffffff" glyph-name="user-times" unicode="" d="M393 350q-89 0-152 63t-62 151 62 152 152 63 151-63 63-152-63-151-151-63z m601-179l139-138q5-6 5-13 0-8-5-13l-76-76q-5-5-12-5-8 0-13 5l-139 139-139-139q-5-5-13-5-7 0-12 5l-76 76q-5 5-5 13 0 7 5 13l139 138-139 139q-5 5-5 13 0 7 5 13l76 75q5 5 12 5 8 0 13-5l139-139 139 139q5 5 13 5 7 0 12-5l76-75q5-6 5-13 0-8-5-13z m-278 0l-101-101q-21-20-21-50 0-30 21-51l46-46q-11-2-24-2h-488q-67 0-108 39t-41 106q0 30 2 58t8 61 15 60 24 55 34 45 48 30 62 11q11 0 22-10 86-68 178-68t178 68q11 10 22 10 15 0 31-4-15-15-22-28t-8-31q0-30 21-51z" horiz-adv-x="1142.9">
@@ -115,30 +115,34 @@
                                 </svg>
                                 Leave
                             </button>
-                            <button type="button" class="btn" v-if="!group.members.includes(user.uid)" @click="join(group)">
+                            <!-- <button type="button" class="btn" v-if="!group.members.includes(user.uid)" @click="join(group)">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100">
                                     <g transform="translate(10,70) scale(0.05,-0.05)">
                                          <path fill="#ffffff" glyph-name="user-plus" unicode="" d="M393 350q-89 0-152 63t-62 151 62 152 152 63 151-63 63-152-63-151-151-63z m536-71h196q7 0 13-6t5-12v-107q0-8-5-13t-13-5h-196v-197q0-7-6-12t-12-6h-107q-8 0-13 6t-5 12v197h-197q-7 0-12 5t-6 13v107q0 7 6 12t12 6h197v196q0 7 5 13t13 5h107q7 0 12-5t6-13v-196z m-411-125q0-29 21-51t50-21h143v-133q-38-28-95-28h-488q-67 0-108 39t-41 106q0 30 2 58t8 61 15 60 24 55 34 45 48 30 62 11q11 0 22-10 44-34 86-51t92-17 92 17 86 51q11 10 22 10 73 0 121-54h-125q-29 0-50-21t-21-50v-107z" horiz-adv-x="1142.9"> </path>
                                     </g>
                                 </svg>
                                 Join
-                            </button>
+                            </button> -->
                         </div>
                     </div>
-                </div>
-            </section>
-        </div>
-        <div v-else>No group!!!</div>
+                <!-- </div> -->
+            </div>
+        </section>
+        <section v-else class="group" style="padding-top: 2rem; padding-bottom: 2rem;">
+            <div>You have not registered to any group yet!!!</div>
+        </section>
     </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
 	name: 'Group',
     data() {
         return {
+            // filteredGroups: [],
             create: false,
             limit: 280,
             group: {
@@ -156,21 +160,21 @@ export default {
         }
     },
     watch: {
-        groups: {
-            handler(){
-                this.$emit('group', this.groups.filter(group => group).length);
-            },
-            deep: true
-        },
+        // groups: {
+        //     handler(){
+        //         this.$emit('group', this.groups.filter(group => group).length);
+        //     },
+        //     deep: true
+        // },
     },
     computed: {
-        ...mapGetters(['groups', 'isAdmin', 'isUser', 'user']),
+        ...mapGetters(['groups', 'isAdmin', 'isUser', 'user', 'userInfo']),
         filteredGroups() {
-            return this.groups.filter(group => !!group.members.length && group.members.includes(this.user.uid));
+            return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id));
         },
     },
     mounted() {
-        this.$emit('group', this.groups.filter(group => group).length);
+        // this.$emit('group', this.groups.filter(group => group).length);
     },
     methods: {
         enterCreate() {
@@ -230,13 +234,30 @@ export default {
                 partners: this.partners,
                 created_at: Date.now(),
             })
+            .then(() => {
+                this.group = {};
+                this.partners = [{}];
+                return;
+            })
+            .catch(err => {
+                return err;
+            });
         },
-        join(group) {
-            if (!group.members.includes(this.user.uid)) {
-                group.members.push(this.user.uid);
-            } else {
-                group.members.splice(group.members.indexOf(this.user.uid), 1);
-            }
+        Leave(group) {
+            var leaveGroup = firebase.functions().httpsCallable('leaveGroup');
+            leaveGroup({id: group.id, name: group.name})
+            .then((res) => {
+                // Read result of the Cloud Function.
+                this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
+                this.$store.dispatch('getMessage', res.data.message);
+                if (this.message != '') {
+                    this.status = this.message;
+                    this.callFunction();
+                }
+            })
+            .catch((error) => {
+                this.$store.dispatch('getMessage', error.message);
+            });
         },
     }
 }

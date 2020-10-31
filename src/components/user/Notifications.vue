@@ -1,7 +1,7 @@
 <template>
     <div class="notification--container">
-        <div v-if="notifications">
-            <section class="notification" v-for="notification in unreadNotifications" :key="notification.id">
+        <section v-if="!!unreadNotifications.length">
+            <div class="notification" v-for="notification in unreadNotifications" :key="notification.id">
                 <div class="notification--header">
                     <h3 class="">{{ notification.name }}</h3>
                 </div>
@@ -28,9 +28,11 @@
                         Mark as unread
                     </button>
                 </div>
-            </section>
-        </div>
-        <div v-else>No notification!!!</div>
+            </div>
+        </section>
+        <section  v-else>
+            <div style="padding: 2rem .5rem;">No notification!!!</div>
+        </section>
     </div>
 </template>
 

@@ -1,12 +1,13 @@
 <template>
     <div>
+		<div v-if="status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
 	<!-- <div class="container" ref="" :class="{active: menu}"> -->
 		<!-- <Header @toggleMenu="toggleMenu"></Header> -->
 		<div class="groups--container">
             <section class="groups--title">
                 <h3 class="">Avialable Groups</h3>
             </section><hr>
-            <section v-if="filteredGroups" class="groups">
+            <section v-if="!!filteredGroups.length" class="groups">
                 <div class="group" v-for="group in filteredGroups" :key="group.id">
                     <div class="group-preview">
                         <h6>Group</h6>
@@ -55,7 +56,9 @@
                     </div>
                 </div>
             </section>
-            <section v-else>No group!!!</section>
+            <section v-else class="groups" style="padding-top: 2rem; padding-bottom: 2rem;">
+                <div>No group available!!!</div>
+            </section>
 		</div>
 	</div>
 </template>
@@ -63,6 +66,7 @@
 <script>
 // @ is an alias to /src
 // import Header from '@/components/partials/Header.vue'
+import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
     name: 'Groups',
@@ -71,7 +75,8 @@ export default {
     },
     data() {
         return {
-			menu: false,
+            menu: false,
+            status,
         }
     },
     watch: {
@@ -83,9 +88,9 @@ export default {
         // },
     },
     computed: {
-        ...mapGetters(['groups', 'user', 'isUser', 'userInfo']),
+        ...mapGetters(['groups', 'user', 'isUser', 'userInfo', 'message']),
         filteredGroups() {
-            return this.groups.filter(group => !group.members.includes(this.user.uid));
+            return this.groups.filter(group => !this.userInfo.groups.some(grp => grp.id === group.id));
         },
     },
     mounted() {
@@ -95,14 +100,40 @@ export default {
 		toggleMenu(val) {
 			this.menu = val;
 		},
+		callFunction: function () {
+            var v = this;
+            setTimeout(function () {
+				v.status = '';
+            }, 10000);
+        },
         join(group) {
-            if (!group.members.includes(this.user.uid)) {
-                group.members.push(this.user.uid);
+            var joinGroup = firebase.functions().httpsCallable('joinGroup');
+            joinGroup({id: group.id, name: group.name})
+            .then((res) => {
+                // Read result of the Cloud Function.
+                // console.log(res)
                 this.userInfo.groups.push({id: group.id, name: group.name});
-            } else {
-                group.members.splice(group.members.indexOf(this.user.uid), 1);
-                this.userInfo.groups.splice(this.userInfo.groups.findIndex(x => x.id === group.id), 1);
-            }
+                this.$store.dispatch('getMessage', res.data.message);
+                if (this.message != '') {
+                    this.status = this.message;
+                    this.callFunction();
+                }
+            })
+            .catch((error) => {
+                // Getting the Error details.
+                // var code = error.code;
+                // var message = error.message;
+                // var details = error.details;
+                this.$store.dispatch('getMessage', error.message);
+            });
+            // if (!group.members.includes(this.user.uid)) {
+            //     group.members.push(this.user.uid);
+            //     this.userInfo.groups.push({id: group.id, name: group.name});
+            // } 
+            // else {
+            //     group.members.splice(group.members.indexOf(this.user.uid), 1);
+            //     this.userInfo.groups.splice(this.userInfo.groups.findIndex(x => x.id === group.id), 1);
+            // }
         },
     }
 }

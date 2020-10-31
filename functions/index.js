@@ -14,7 +14,7 @@ admin.initializeApp(functions.config().firebase);
  * to trigger code when a new object is created at a given path of the Cloud Firestore.
  * Use addUsers function to questions with users.:
  */
-exports.addAdmin = functions.firestore.document('users/{userId}')
+exports.addUser = functions.firestore.document('users/{userId}')
 .onCreate(
     async (snap, context) => {
         // get user and add custom claim (admin)
@@ -29,7 +29,7 @@ exports.addAdmin = functions.firestore.document('users/{userId}')
             });
         })
         .then(() => {
-            return {message: `Success! user and asmin privilege granted to ${snap.email}.`}
+            return {message: `Success! User privilege granted to ${snap.email}.`}
         })
         .catch(err => {
             return err;
@@ -39,10 +39,35 @@ exports.addAdmin = functions.firestore.document('users/{userId}')
 // [END Add Admin ]
 
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
-// exports.groupSubscription = functions.https.onCall((data, context) => {
-//     // ...
+exports.joinGroup = functions.https.onCall(async (data, context) => {
+    // ...
+    return admin.firestore().collection('users').doc(context.auth.uid).update({
+        groups: admin.firestore.FieldValue.arrayUnion(data),
+    })
+    .then(() => {
+        return {message: `You have successfully joined ${data.name} group!`}
+    })
+    .catch(err => {
+        // return err;
+        throw new functions.https.HttpsError(`Unable to join ${data.name} group! Try again later`);
+    })
+});
 
-// });
+// Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
+exports.leaveGroup = functions.https.onCall(async (data, context) => {
+    // ...
+    // this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
+    return admin.firestore().collection('users').doc(context.auth.uid).update({
+        groups: admin.firestore.FieldValue.arrayRemove(data),
+    })
+    .then(() => {
+        return {message: `You have successfully left ${data.name} group!`};
+    })
+    .catch(err => {
+        // return err;
+        throw new functions.https.HttpsError(`Unable to leave ${data.name} group! Try again later`);
+    })
+});
 
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 // exports.projectSubscription = functions.https.onCall((data, context) => {
