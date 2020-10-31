@@ -192,6 +192,7 @@ export default {
 	},
 	mounted() {
 		this.notification();
+		this.$store.dispatch('getGroups');
 	},
 	methods: {
 		toggleMenu(val) {
@@ -208,7 +209,6 @@ export default {
             var v = this;
             setTimeout(function () {
 				v.status = '';
-				// v.$store.dispatch('getMessage', '');
             }, 10000);
         },
 		enableNotification() {

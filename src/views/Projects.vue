@@ -478,7 +478,7 @@ input:-internal-autofill-selected {
     padding: .5rem 0;
 }
 /* Wider screen */
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 940px) {
 .projects--container {
     padding: 1rem 20rem;;
 }

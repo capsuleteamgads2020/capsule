@@ -42,7 +42,12 @@ exports.addUser = functions.firestore.document('users/{userId}')
 exports.joinGroup = functions.https.onCall(async (data, context) => {
     // ...
     return admin.firestore().collection('users').doc(context.auth.uid).update({
-        groups: admin.firestore.FieldValue.arrayUnion(data),
+        groups: admin.firestore.FieldValue.arrayUnion({id: data.id, name: data.name}),
+    })
+    .then(async () => {
+        await admin.firestore().collection('groups').doc(data.id).update({
+            members: admin.firestore.FieldValue.arrayUnion(data.user_id),
+        })
     })
     .then(() => {
         return {message: `You have successfully joined ${data.name} group!`}
@@ -59,6 +64,11 @@ exports.leaveGroup = functions.https.onCall(async (data, context) => {
     // this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
     return admin.firestore().collection('users').doc(context.auth.uid).update({
         groups: admin.firestore.FieldValue.arrayRemove(data),
+    })
+    .then(async () => {
+        await admin.firestore().collection('groups').doc(data.id).update({
+            members: admin.firestore.FieldValue.arrayRemove(data.user_id),
+        })
     })
     .then(() => {
         return {message: `You have successfully left ${data.name} group!`};

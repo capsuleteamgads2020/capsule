@@ -9,7 +9,7 @@ export default {
 	// 	const res = await axios({
 	// 		method: 'get',
 	// 		url: `http://localhost:8080/v1/users/fetchAll`,
-	// 		// url: `https://api.algoboard.com/v1/users/fetchAll`,
+	// 		// url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/fetchAll`,
 	// 		headers: {
 	// 			'Content-Type': 'application/json',
 	// 			'Accept': 'application/json',
@@ -39,8 +39,8 @@ export default {
 		// return api().put(`users/updateOne/${params.id}`, params);
 		const res = await axios({
 			method: 'put',
-			url: `http://localhost:8080/v1/users/updateOne/${params.id}`,
-			// url: `https://api.algoboard.com/v1/users/updateOne/${params.id}`,
+			// url: `http://localhost:8080/v1/users/updateOne/${params.id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/updateOne/${params.id}`,
 			data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
@@ -70,8 +70,8 @@ export default {
         // return api().delete(`users/deleteOne/${user_id}`);
         const res = await axios({
             method: 'DELETE',
-			url: `http://localhost:8080/v1/users/deleteOne/${user_id}`,
-			// url: `https://api.algoboard.com/v1/users/deleteOne/${user_id}`,
+			// url: `http://localhost:8080/v1/users/deleteOne/${user_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/deleteOne/${user_id}`,
             // data: { answer: 42 }
         })
         return res;

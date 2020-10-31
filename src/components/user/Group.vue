@@ -84,7 +84,7 @@
                         <h6>Group</h6>
                         <h2>{{ group.name }}</h2>
                         <a href="#">
-                            View all members: {{ group.members.length }}
+                            View all members: {{ group.members }}
                             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: bottom; color: #fff; opacity: 0.6;">
                                 <g transform="translate(10,70) scale(0.05,-0.05)">
                                     <path fill="#ffffff" glyph-name="users" unicode="" d="M331 350q-90-3-148-71h-75q-45 0-77 22t-31 66q0 197 69 197 4 0 25-11t54-24 66-12q38 0 75 13-3-21-3-37 0-78 45-143z m598-356q0-66-41-105t-108-39h-488q-68 0-108 39t-41 105q0 30 2 58t8 61 14 61 24 54 35 45 48 30 62 11q6 0 24-12t41-26 59-27 76-12 75 12 60 27 41 26 23 12q35 0 63-11t47-30 35-45 24-54 15-61 8-61 2-58z m-572 713q0-59-42-101t-101-42-101 42-42 101 42 101 101 42 101-42 42-101z m393-214q0-89-63-152t-151-62-152 62-63 152 63 151 152 63 151-63 63-151z m321-126q0-43-31-66t-77-22h-75q-57 68-147 71 45 65 45 143 0 16-3 37 37-13 74-13 33 0 67 12t54 24 24 11q69 0 69-197z m-71 340q0-59-42-101t-101-42-101 42-42 101 42 101 101 42 101-42 42-101z">
@@ -177,6 +177,12 @@ export default {
         // this.$emit('group', this.groups.filter(group => group).length);
     },
     methods: {
+		callFunction: function () {
+            var v = this;
+            setTimeout(function () {
+				v.status = '';
+            }, 10000);
+        },
         enterCreate() {
             this.create = true;
         },
@@ -245,9 +251,10 @@ export default {
         },
         Leave(group) {
             var leaveGroup = firebase.functions().httpsCallable('leaveGroup');
-            leaveGroup({id: group.id, name: group.name})
+            leaveGroup({id: group.id, name: group.name, user_id: this.user.uid})
             .then((res) => {
                 // Read result of the Cloud Function.
+                group.members -= 1;
                 this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
                 this.$store.dispatch('getMessage', res.data.message);
                 if (this.message != '') {
@@ -420,7 +427,7 @@ input:-internal-autofill-selected {
     margin: 1rem .5rem;
 }
 .btn:hover {
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 .btn--enable {
     background-color: #edf2f7;
