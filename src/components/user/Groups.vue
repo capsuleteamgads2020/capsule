@@ -8,9 +8,8 @@
                 <h3 class="">Avialable Groups</h3>
             </section><hr>
             <section v-if="!!groups.length" class="groups">
-                <div class="group" v-for="group in groups" :key="group.id">
-                    
-                    <div v-if="Object.entries(userInfo).length !== 0 && userInfo.groups.findIndex(x => x.id === group.id) === -1">
+                <div v-if="Object.entries(userInfo).length !== 0">
+                    <div class="group" v-for="group in groups" :key="group.id" v-show="userInfo.groups.findIndex(x => x.id === group.id) === -1">
                         <div class="group-preview">
                             <h6>Group</h6>
                             <h2>{{ group.name }}</h2>
@@ -57,7 +56,9 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else>
+                </div>
+                <div v-else>
+                    <div class="group" v-for="group in groups" :key="group.id">
                         <div class="group-preview">
                             <h6>Group</h6>
                             <h2>{{ group.name }}</h2>
