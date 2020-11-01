@@ -7,114 +7,91 @@ let FieldValue = require('firebase-admin').firestore.FieldValue;
 const router = express.Router();
 
 /**
- * [START GET USERS]
+ * [START GET COMMENTS]
  * @param {object} req Cloud Function request context.
  * @param {object} req.body The Datastore kind of the data to save.
  * @param {object} res Cloud Function response context.
- * Retrieve users (up to ten at a time).
+ * Retrieve comments (up to ten at a time).
  */
-router.get('/fetchAll', checkIfIsAdmin, async (req, res, next) => {
-    await admin.firestore().collection('users').get()
+router.get('/fetchAll/:id', checkIfIsUser, async (req, res, next) => {
+    const user = await admin.firestore().collection('users').doc(req.params.id).get();
+    await admin.firestore().collection('comments').where('groups', 'array-contains-any', user.data().groups).get()
     .then(snapshot => {
         if (snapshot.empty) {
             res.send(`No query data received from database!`);
             return;
         }
-        const users = [];
+        const comments = [];
         snapshot.forEach(doc => {
 
-            let user = {};
-            user.id = doc.data().user.id;
-            user.email = doc.data().email;
-            user.name = doc.data().name;
-            user.phone = doc.data().phone;
-            user.imageUrl = doc.data().imageUrl;
-            user.created_at = doc.data().created_at;
-            user.updated_at = doc.data().updated_at;
-            user.projects = doc.data().projects.length;
-            user.groups = doc.data().groups.length;
-            user.status = doc.data().status;
-            users.push(user);
+            let comment = doc.data();
+            comment.id = doc.data().id;
+            comments.push(comment);
         })
-        res.status(200).json(users)
+        res.status(200).json(comments)
     })
     .catch(err => { 
-        console.log(`Error getting users: ${err}`);
-        res.status(500).send(`Error getting users: ${err}`);
+        console.log(`Error getting comments: ${err}`);
+        res.status(500).send(`Error getting comments: ${err}`);
     });
 });
-// [END GET USERS]
+// [END GET COMMENTS]
 
 /**
- * [START POST USER]
+ * [START POST COMMENT]
  * @param {object} req Cloud Function request context.
  * @param {object} req.body The Datastore kind of the data to save.
  * @param {object} res Cloud Function response context.
- * Create a new user.
+ * Create a new comment.
  */
-router.post('/addOne/:id', checkIfIsUser, async (req, res, next) => {
-    // Add user data to firestore
-    await admin.firestore().collection('users').doc(req.params.id).set({
-        email: req.body.email,
-        name: req.body.name,
-        phone: req.body.phone,
-        imageUrl: req.body.imageUrl,
-        created_at: req.body.created_at,
-        updated_at: '',
-        projects: [],
-        groups: [],
-        notifications: [],
-        status: req.body.status,
+router.post('/addOne/', checkIfIsUser, async (req, res, next) => {
+    // Add comment data to firestore
+    await admin.firestore().collection('comments').add({
+        comment: req.body.comment,
     })
-    .then((user) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully created new user:', user);
+    .then((comment) => {
+        // See the UserRecord reference doc for the contents of commentRecord.
+        console.log('Successfully created new comment:', comment);
         res.status(200).send(`Project added successfully to database`);
     })
     .catch((err) => {
-        console.log('Error adding new user:', err);
+        console.log('Error adding new comment:', err);
         res.status(500).send(`Error adding new data to database: ${err}`);
     });
 });
-// [END POST USER]
+// [END POST COMMENT]
 
 
 /**
- * [START PUT USER]
+ * [START PUT COMMENT]
  * @param {object} req Cloud Function request context.
  * @param {object} req.body The Datastore kind of the data to save.
  * @param {object} res Cloud Function response context.
  * Update a questions.
  */
 router.put('/updateOne/:id', checkIfIsAdmin, async (req, res, next) => {
-    await admin.firestore().collection('users').doc(req.params.id).update({
-        email: req.body.email,
-        name: req.body.name,
-        phone: req.body.phone,
-        imageUrl: req.body.imageUrl,
-        created_at: req.body.created_at,
-        updated_at: req.body.updated_at,
-        status: req.body.status,
+    await admin.firestore().collection('comments').doc(req.params.id).update({
+        replies: admin.firestore.FieldValue.arrayUnion(req.body.reply),
     })
-    .then((user) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully udated user:', users);
+    .then((comment) => {
+        // See the UserRecord reference doc for the contents of commentRecord.
+        console.log('Successfully udated comment:', comment);
         res.status(200).send(`Project details updated successfully to database.`);
     })
     .catch((err) => {
-        console.log('Error updating user record: ', err);
-        res.status(500).send(`Error updating user record to database: ${err}`);
+        console.log('Error updating comment record: ', err);
+        res.status(500).send(`Error updating comment record to database: ${err}`);
     });
 });
-// [END PUT USER]
+// [END PUT COMMENT]
 
 /**
- * [START GET USER]
+ * [START GET COMMENT]
  *
- * Retrieve a user.
+ * Retrieve a comment.
  */
 router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
-    await admin.firestore().collection('users').doc(req.params.id).get()
+    await admin.firestore().collection('comments').doc(req.params.id).get()
     .then(doc => {
         if (!doc.exists) {
             console.log('No such document!');
@@ -124,43 +101,33 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
 
         var notifications = doc.data().notifications.filter(notification => notification.read == false);
 
-        let user = {};
-        user.id = doc.data().user.id;
-        user.email = doc.data().email;
-        user.name = doc.data().name;
-        user.phone = doc.data().phone;
-        user.imageUrl = doc.data().imageUrl;
-        user.created_at = doc.data().created_at;
-        user.updated_at = doc.data().updated_at;
-        user.projects = doc.data().projects.length;
-        user.groups = doc.data().groups.length;
-        user.notifications = notifications;
-        user.status = doc.data().status;
-        res.status(200).json(user);
+        let comment = doc.data();
+        comment.id = doc.data().id;
+        res.status(200).json(comment);
     })
     .catch((err) => {
         console.log('Error getting documents', err);
-        res.status(500).send(`Error fetching user record from database: ${err}`);
+        res.status(500).send(`Error fetching comment record from database: ${err}`);
     })                        
 });
-// [END GET USER]
+// [END GET COMMENT]
 
 /**
- * [START DELETE USER]
+ * [START DELETE COMMENT]
  *
- * Delete a user.
+ * Delete a comment.
  */
 router.delete('/deleteOne/:id', checkIfIsUser, async (req, res) => {
-    await admin.firestore().collection('users').doc(req.params.id).delete()
+    await admin.firestore().collection('comments').doc(req.params.id).delete()
     .then(doc => {
-        console.log('Successfully deleted user', doc);
+        console.log('Successfully deleted comment', doc);
         res.status(200).send(`Project with id: ${req.params.id} successfully deleted from database!`);
     })
     .catch((err) => {
-        console.log('Error deleting user', err);
-        res.status(500).send(`Error deleting user record from database: ${err}`);
+        console.log('Error deleting comment', err);
+        res.status(500).send(`Error deleting comment record from database: ${err}`);
     })                        
 });
-// [END DELETE USER]
+// [END DELETE COMMENT]
 
 module.exports = router;

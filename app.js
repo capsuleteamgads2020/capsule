@@ -12,15 +12,12 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // Add service account details
-// var serviceAccount = require("./key.json");
+var serviceAccount = require("./key.json");
 
-// Initialize firebase
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   databaseURL: "https://capsulebackend.firebaseio.com"
-// });
-
-console.log('Hello')
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://capsuleteamapi.firebaseio.com"
+});
 
 // Automatically parse request body as through Middlewares
 app.use(cors())
@@ -34,10 +31,10 @@ app.use(bodyParser.json({ type: 'application/*+json' }))
 // app.use(cookieParser());
 
 // App routes
-// app.use('/v1/comments', require('./routes/api/comments'));
-// app.use('/v1/groups', require('./routes/api/groups'));
-// app.use('/v1/projects', require('./routes/api/projects'));
-// app.use('/v1/users', require('./routes/api/users'));
+app.use('/v1/comments', require('./routes/api/comments'));
+app.use('/v1/groups', require('./routes/api/groups'));
+app.use('/v1/projects', require('./routes/api/projects'));
+app.use('/v1/users', require('./routes/api/users'));
 // app.use('/v1/accounts', require('./routes/api/accounts'));
 
 // Set Content-Type for all responses for these routes
@@ -56,13 +53,14 @@ throw new Error('Test exception');
 });
 
 app.get('/logs', (req, res) => {
-console.log('Hey, you triggered a custom log entry. Good job!');
-res.sendStatus(200);
+// console.log('Hey, you triggered a custom log entry. Good job!');
+res.status(200).send(`Hey, you triggered a custom log entry. Good job!`);
 });
 
 // Start up port
 app.listen( process.env.PORT || 8080, () => {
   console.log('Server started on port: ', process.env.PORT || 8080);
+  // res.status(200).send(`Server started on port: ${process.env.PORT}`);
 });
 
 module.exports = app;

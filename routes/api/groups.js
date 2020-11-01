@@ -13,7 +13,7 @@ const router = express.Router();
  * @param {object} res Cloud Function response context.
  * Retrieve groups (up to ten at a time).
  */
-router.get('/fetchAll', checkIfIsUser, async (req, res, next) => {
+router.get('/fetchAll', async (req, res, next) => {
     await admin.firestore().collection('groups').get()
     .then(snapshot => {
         if (snapshot.empty) {
@@ -35,7 +35,7 @@ router.get('/fetchAll', checkIfIsUser, async (req, res, next) => {
             group.update_at = doc.data().update_at;
             group.created_at = doc.data().created_at;
             group.active = doc.data().active;        
-            group.subscribers = doc.data().subscribers.length;
+            group.members = doc.data().members.length;
             group.projects = doc.data().projects.length;
             group.rating = rating;
             groups.push(group);
@@ -61,9 +61,10 @@ router.post('/addOne', checkIfIsAdmin, async (req, res, next) => {
     await admin.firestore().collection('groups').add({
         name: req.body.name,
         description: req.body.description,
+        partners: req.body.partners,
         created_at: req.body.created_at,
         active: req.body.active,
-        subscribers: [],
+        members: req.body.members,
         projects: [],
         rating: [],
     })
@@ -96,7 +97,7 @@ router.put('/updateOne/:id', checkIfIsAdmin, async (req, res, next) => {
     })
     .then((group) => {
         // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully udated group:', groups);
+        console.log('Successfully udated group:', group);
         res.status(200).send(`Project details updated successfully to database.`);
     })
     .catch((err) => {
@@ -130,7 +131,7 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
         group.update_at = doc.data().update_at;
         group.created_at = doc.data().created_at;
         group.active = doc.data().active;        
-        group.subscribers = doc.data().subscribers.length;
+        group.members = doc.data().members.length;
         group.projects = doc.data().projects.length;
         group.rating = rating;
         res.status(200).json(group);

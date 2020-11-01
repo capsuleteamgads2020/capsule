@@ -52,7 +52,7 @@ router.get('/fetchAll', checkIfIsAdmin, async (req, res, next) => {
  * @param {object} res Cloud Function response context.
  * Create a new user.
  */
-router.post('/addOne/:id', async (req, res, next) => {
+router.post('/addOne/:id', checkIfIsUser, async (req, res, next) => {
     // Add user data to firestore
     await admin.firestore().collection('users').doc(req.params.id).set({
         email: req.body.email,
@@ -98,7 +98,7 @@ router.put('/updateOne/:id', checkIfIsAdmin, async (req, res, next) => {
     })
     .then((user) => {
         // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully udated user:', user);
+        console.log('Successfully udated user:', users);
         res.status(200).send(`Project details updated successfully to database.`);
     })
     .catch((err) => {
@@ -117,7 +117,7 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
     await admin.firestore().collection('users').doc(req.params.id).get()
     .then(doc => {
         if (!doc.exists) {
-            console.log('No such user!');
+            console.log('No such document!');
             res.send(`Failed to received query data from database!`);
             return;
         }
@@ -125,7 +125,7 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
         var notifications = doc.data().notifications.filter(notification => notification.read == false);
 
         let user = {};
-        user.id = doc.data().id;
+        user.id = doc.data().user.id;
         user.email = doc.data().email;
         user.name = doc.data().name;
         user.phone = doc.data().phone;
@@ -133,7 +133,7 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
         user.created_at = doc.data().created_at;
         user.updated_at = doc.data().updated_at;
         user.projects = doc.data().projects.length;
-        user.groups = doc.data().groups;
+        user.groups = doc.data().groups.length;
         user.notifications = notifications;
         user.status = doc.data().status;
         res.status(200).json(user);

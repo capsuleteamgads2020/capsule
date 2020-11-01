@@ -36,3 +36,29 @@ https://stackoverflow.com/questions/10695629/what-is-the-parameter-next-used-for
 https://softauthor.com/firebase-cloud-firestore-add-set-update-delete/
 https://www.youtube.com/watch?v=i5B5ZZGq9xI&list=PLNEuOb0G_N12Vaf9mCSWHNecDreh-wVlX
 https://www.youtube.com/playlist?list=PL4cUxeGkcC9i_aLkr62adUTJi53y7OjOf
+
+const pets = ['cat', 'dog', 'bat'];
+const animals = ['goat', 'cow', 'pig'];
+pets.filter(pet => {
+    if(!animals.includes(pet)) {
+        animals.push(pet);
+    }
+});
+
+var ref = db.collection('arrays-test').doc('mydoc');
+  
+  ref.set({ arr: [] }).then(console.log)
+  ref.update({
+    arr: firebase.firestore.FieldValue.arrayUnion({ foo: "BAR" })
+  });
+ 
+  db.collection('arrays-test')
+    .where('arr', 'array-contains', { foo: "BAR" })
+    .get().then(function(snap) {
+      if (snap) {
+      	snap.docs.forEach(function (doc) {
+       		console.log(doc.id);
+        	console.log(doc.data());
+        });
+      }
+    });
