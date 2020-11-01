@@ -179,8 +179,24 @@ input[type=tel] {
 	outline: none;
 	border: none;
 	background-color: #FFFFFF;
-	/* -webkit-transform: scale(1);
-	transform: scale(1); */
+	-webkit-transform: scale(1);
+	transform: scale(1);
+}
+textarea,
+[type='text']:focus,
+[type='number']:focus,
+[type='date']:focus,
+[type='tel']:focus,
+[type='search']:focus,
+[type="email"]:focus,
+[type='password']:focus {
+	width: 100%;
+	padding: 0.5rem;
+	outline: none;
+	border: none;
+	background-color: #FFFFFF;
+	-webkit-transform: scale(1);
+	transform: scale(1);
 }
 input[type=text]:focus {
   width: 100%;

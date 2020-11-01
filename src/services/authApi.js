@@ -55,8 +55,8 @@ export default {
 		// return api().get(`users/fetchOne/${user_id}`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/users/fetchOne/${user_id}`,
-			// url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/fetchOne/${user_id}`,
+			// url: `http://localhost:8080/v1/users/fetchOne/${user_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/users/fetchOne/${user_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',

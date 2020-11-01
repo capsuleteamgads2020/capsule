@@ -8,8 +8,8 @@ export default {
 		// return api().get(`comments/fetchAll/${uiser_id}`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/comments/fetchAll/${uiser_id}`,
-			// url: `https://api.algoboard.com/v1/comments/fetchAll/${uiser_id}`,
+			// url: `http://localhost:8080/v1/comments/fetchAll/${uiser_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/comments/fetchAll/${uiser_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -23,8 +23,8 @@ export default {
 		// return api().post(`comments/addOne`, params);
 		const res = await axios({
 			method: 'post',
-			url: `http://localhost:8080/v1/comments/addOne`,
-			// url: `https://api.algoboard.com/v1/comments/addOne`,
+			// url: `http://localhost:8080/v1/comments/addOne`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/comments/addOne`,
 			// data: params,
 			params: params,
 			headers: { 
@@ -40,8 +40,8 @@ export default {
 		// return api().put(`comments/updateOne/${params.id}`, params);
 		const res = await axios({
 			method: 'put',
-			url: `http://localhost:8080/v1/comments/updateOne/${params.id}`,
-			// url: `https://api.algoboard.com/v1/comments/updateOne/${params.id}`,
+			// url: `http://localhost:8080/v1/comments/updateOne/${params.id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/comments/updateOne/${params.id}`,
 			data: params,
 			// data: JSON.stringify(params),
 			headers: { 
@@ -57,8 +57,8 @@ export default {
 		// return api().get(`comments/fetchOne/${comment_id}`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/projects/fetchOne/${comment_id}`,
-			// url: `https://api.algoboard.com/v1/comments/fetchOne/${comment_id}`,
+			// url: `http://localhost:8080/v1/projects/fetchOne/${comment_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/comments/fetchOne/${comment_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -72,8 +72,8 @@ export default {
         // return api().delete(`comments/deleteOne/${comment_id}`);
         const res = await axios({
             method: 'DELETE',
-			url: `http://localhost:8080/v1/comments/deleteOne/${comment_id}`,
-			// url: `https://api.algoboard.com/v1/comments/deleteOne/${comment_id}`,
+			// url: `http://localhost:8080/v1/comments/deleteOne/${comment_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/comments/deleteOne/${comment_id}`,
             // data: { answer: 42 }
         })
         return res;

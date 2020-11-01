@@ -34,7 +34,7 @@
                             <p class="description">{{ group.description }}</p>
                         </div>
                         <div class="group-footer">
-                            <span class="rating">Rating: {{ group.rating }}</span>
+                            <span class="rating">Rating: {{ group.rating || 0 }}</span>
                             <!-- <button type="button" class="btn" v-if="isUser" @click="join(group)">
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100">
                                     <g transform="translate(10,70) scale(0.05,-0.05)">
@@ -66,7 +66,8 @@
 <script>
 // @ is an alias to /src
 // import Header from '@/components/partials/Header.vue'
-import firebase from 'firebase'
+import firebase from '../../firebaseConfig.js'
+// import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
     name: 'Groups',
@@ -124,7 +125,6 @@ export default {
                 return;
             }
             if (this.userInfo.groups.findIndex(x => x.id === group.id) !== -1) {
-                console.log(group)
                 return;
             }
             var joinGroup = firebase.functions().httpsCallable('joinGroup');

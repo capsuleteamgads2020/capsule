@@ -8,8 +8,8 @@ export default {
 		// return api().get(`groups/fetchAll`);
 		const res = await axios({
 			// method: 'get',
-			url: `http://localhost:8080/v1/groups/fetchAll`,
-			// url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/fetchAll`,
+			// url: `http://localhost:8080/v1/groups/fetchAll`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/fetchAll`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',

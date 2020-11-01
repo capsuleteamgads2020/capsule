@@ -2,6 +2,7 @@
 
 import authApi from '@/services/authApi';
 import firebase from '../../firebaseConfig.js';
+// import firebase from 'firebase'
 
 const state = {
 	// Credentials

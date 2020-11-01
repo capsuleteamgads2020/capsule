@@ -8,8 +8,8 @@ export default {
 		// return api().get(`projects/fetchAll`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/projects/fetchAll`,
-			// url: `https://api.algoboard.com/v1/projects/fetchAll`,
+			// url: `http://localhost:8080/v1/projects/fetchAll`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/fetchAll`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -23,8 +23,8 @@ export default {
 		// return api().post(`projects/addOne`, params);
 		const res = await axios({
 			method: 'post',
-			url: `http://localhost:8080/v1/projects/addOne`,
-			// url: `https://api.algoboard.com/v1/projects/addOne`,
+			// url: `http://localhost:8080/v1/projects/addOne`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/addOne`,
 			// data: params,
 			params: params,
 			headers: { 
@@ -40,8 +40,8 @@ export default {
 		// return api().put(`projects/updateOne/${params.id}`, params);
 		const res = await axios({
 			method: 'put',
-			url: `http://localhost:8080/v1/projects/updateOne/${params.id}`,
-			// url: `https://api.algoboard.com/v1/projects/updateOne/${params.id}`,
+			// url: `http://localhost:8080/v1/projects/updateOne/${params.id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/updateOne/${params.id}`,
 			data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
@@ -56,8 +56,8 @@ export default {
 		// return api().get(`projects/fetchOne/${project_id}`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/projects/fetchOne/${project_id}`,
-			// url: `https://api.algoboard.com/v1/projects/fetchOne/${project_id}`,
+			// url: `http://localhost:8080/v1/projects/fetchOne/${project_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/fetchOne/${project_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -71,8 +71,8 @@ export default {
         // return api().delete(`projects/deleteOne/${project_id}`);
         const res = await axios({
             method: 'DELETE',
-			url: `http://localhost:8080/v1/projects/deleteOne/${project_id}`,
-			// url: `https://api.algoboard.com/v1/projects/deleteOne/${project_id}`,
+			// url: `http://localhost:8080/v1/projects/deleteOne/${project_id}`,
+			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/deleteOne/${project_id}`,
 			// data: { answer: 42 },
 			headers: {
 				'Content-Type': 'application/json',
