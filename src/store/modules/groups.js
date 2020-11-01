@@ -96,14 +96,13 @@ const actions = {
     },
     async getGroups({  commit }) {
         // api call
-        // console.log('here')
-        if (state.groups && state.groups.length > 0) {
+        if (state.groups && !!state.groups.length) {
 			return state.groups;
 		}
         
 		return groupsApi.getGroups()
 		.then(res => {
-			commit('GET_GROUPS', res.data);
+            commit('GET_GROUPS', res.data);
 			return res.data;
 		})
 		.catch( err => {

@@ -40,15 +40,15 @@ const actions = {
 		});
 		// commit('SET_USER', user);
 	},
-	async getUserInfo({ commit }, payload) {
+	async getUserInfo({ commit, dispatch }, payload) {
 		// api call
 		return authApi.getUser(payload.tok, payload.uid)
 		.then(res => {
 			commit('SET_USER_INFO', res.data);
-			this.$store.dispatch('getGroups');
-			this.$store.dispatch('getProjects');
-			this.$store.dispatch('getBookmarks');
-			this.$store.dispatch('getNotifications');
+			dispatch('getGroups');
+			// this.$store.dispatch('getProjects');
+			// this.$store.dispatch('getBookmarks');
+			// this.$store.dispatch('getNotifications');
 			return res.data;
 		})
 		.catch( err => {
@@ -100,25 +100,22 @@ const actions = {
 			return error;
 		});
 	},
-	async signIn ({ commit, dispatch }, payload) {
-		commit('GET_GROUPS', []);
+	async signIn ({ commit }, payload) {
 		return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
 		.then( user => {
-			dispatch('getUserInfo', {tok: user.user.ya, uid: user.user.uid});
 			if (user && firebase.auth().currentUser.emailVerified) {
-				firebase.auth().onAuthStateChanged(user => {
-					user.getIdToken(/* forceRefresh */ )
-					.then(idToken => {
-						commit('SET_ID_TOKEN', idToken);
-						// commit('SET_USER', user);
-						// dispatch('getUserInfo', user.user.uid);
-					})
-					.catch(err => {
-						return err;
-					});
+				firebase.auth().onAuthStateChanged(currentUser => {
+					if (currentUser) {
+						currentUser.getIdToken(/* forceRefresh */ )
+						.then(idToken => {
+							commit('SET_ID_TOKEN', idToken);
+						})
+						.catch(err => {
+							return err;
+						});
+					}
 				})
 			}
-			// dispatch('getGroups');
 			return user;
 		});
 	},

@@ -58,3 +58,8 @@ or
 ```
 ngrok http --host-header=rewrite 8080
 ```
+
+# Verify if object is empty in js
+```
+Object.entries(state.userInfo).length === 0
+```

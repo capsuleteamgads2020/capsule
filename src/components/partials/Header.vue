@@ -6,13 +6,13 @@
 				<div class="hamburger" id="hamburger" ref="hamburger" @click.prevent="menu"><span class="openMenu" ref="openMenu">&#9776;</span></div>
 			</div>
 			<div class="logo mobile--logo">
-				<router-link class="mobile--logo--link" style="" :to="{ name: 'Home' }"><img alt="Capsule logo" src="../../assets/logo.svg"></router-link>
+				<router-link class="mobile--logo--link" style="" :to="{ name: 'Home' }"><img alt="Capsule logo" width="auto" height="auto" src="../../assets/logo.svg"></router-link>
 			</div>
         </header>
 		<nav class="nav" ref="nav">
 			<!-- https://stackoverflow.com/a/48633080-->
 			<span class="hamburger" id="hamburger" ref="hamburger" @click.prevent="menu"><span name="close menu" class="closeMenu" ref="closeMenu">&#10005;</span></span>
-			<router-link :disabled='!isMenu' class="link--item logo mobile--logo--link" style="background-color: transparent;" :to="{ name: 'Home' }"><img alt="Capsule logo" src="../../assets/logo.svg"></router-link>
+			<router-link :disabled='!isMenu' class="link--item logo mobile--logo--link" style="background-color: transparent;" :to="{ name: 'Home' }"><img alt="Capsule logo" width="auto" height="auto" src="../../assets/logo.svg"></router-link>
 			<ul class="menu">
 				<!-- <li class="list--item logo"><router-link class="link--item" :to="{ name: 'Home' }"><img alt="Capsule logo" src="../../assets/logo.svg"></router-link></li> -->
 				<li class="list--item"><router-link class="link--item home" :to="{ name: 'Home' }">Home</router-link></li>

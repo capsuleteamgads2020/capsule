@@ -174,11 +174,11 @@ export default {
 		}
 	},
     watch: {
-        filteredGroups: {
-			handler() {
-				this.notification();
-			}
-        },
+        // filteredGroups: {
+		// 	handler() {
+		// 		this.notification();
+		// 	}
+        // },
     },
 	computed: {
 		...mapGetters(['notifications', 'bookmarks', 'groups', 'isUser', 'user', 'userInfo', 'message']),
@@ -186,13 +186,15 @@ export default {
 			return this.notifications.filter(notification => notification.read == false).length;
 		},
 		filteredGroups() {
-			// console.log(this.userInfo)
-            return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id)).length;
+			if (Object.entries(this.userInfo).length !== 0) {
+				return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id)).length;
+			}
+            return null;
         },
 	},
 	mounted() {
 		this.notification();
-		this.$store.dispatch('getGroups');
+		// this.$store.dispatch('getGroups');
 	},
 	methods: {
 		toggleMenu(val) {

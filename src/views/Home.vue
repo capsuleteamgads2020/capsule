@@ -32,7 +32,6 @@ export default {
         ...mapGetters(['message']),
 	},
 	mounted(){
-		this.$store.dispatch('getGroups');
 		if (this.message != '') {
 			this.status = this.message;
 			this.callFunction();

@@ -20,8 +20,6 @@ export default {
 		return res;
 	},
 	async addGroup (idToken, params) {
-		// console.log(params);
-		// console.log(idToken);
 		// return api().post(`groups/addOne`, params);
 		const res = await axios({
 			method: 'post',

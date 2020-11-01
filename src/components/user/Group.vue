@@ -136,8 +136,7 @@
 
 <script>
 // @ is an alias to /src
-import firebase from '../../firebaseConfig.js'
-// import firebase from 'firebase'
+import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
 	name: 'Group',
