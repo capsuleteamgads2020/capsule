@@ -22,8 +22,6 @@ router.get('/fetchAll', async (req, res, next) => {
         }
         const groups = [];
         snapshot.forEach(doc => {
-            // let group = doc.data();
-            // group.id = doc.id,
 
             var sum = doc.data().rating.reduce((a, b) => a + b, 0);
             var rating = sum/doc.data().rating.length;
