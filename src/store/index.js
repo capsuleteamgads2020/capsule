@@ -68,7 +68,7 @@ export default new Vuex.Store({
 		bookmark: null,
 		contributors: [
 			{'id': 1, 'name': 'Callis', 'role': 'member', 'twitter': '@callezenwaka'},
-			{'id': 2, 'name': 'Rahman', 'role': 'member', 'twitter': '@rahman'},
+			{'id': 2, 'name': 'Rahman', 'role': 'member', 'twitter': '@rahmanorewole'},
 			{'id': 3, 'name': 'Honesty', 'role': 'member', 'twitter': '@honesty'},
 			{'id': 4, 'name': 'Nnamdi', 'role': 'member', 'twitter': '@nnamdi'},
 		],
