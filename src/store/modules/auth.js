@@ -2,6 +2,7 @@
 
 import authApi from '@/services/authApi';
 import firebase from '../../firebaseConfig.js';
+// import firebase from 'firebase'
 
 const state = {
 	// Credentials
@@ -39,20 +40,24 @@ const actions = {
 		});
 		// commit('SET_USER', user);
 	},
-	async getUserInfo({ commit }, payload) {
+	async getUserInfo({ commit, dispatch }, payload) {
 		// api call
 		return authApi.getUser(payload.tok, payload.uid)
 		.then(res => {
 			commit('SET_USER_INFO', res.data);
-			this.$store.dispatch('getGroups');
-			this.$store.dispatch('getProjects');
-			this.$store.dispatch('getBookmarks');
-			this.$store.dispatch('getNotifications');
+			dispatch('getGroups');
+			dispatch('getProjects');
+			// this.$store.dispatch('getBookmarks');
+			// this.$store.dispatch('getNotifications');
 			return res.data;
 		})
 		.catch( err => {
 			return err;
 		});
+	},
+	async updateUserInfoGroup({ commit }, group) {
+		// api call
+		commit('UPDATE_USER_INFO_GROUP', group);
 	},
 	async setIsUser({ commit }, isUser) {
 		// api call
@@ -99,25 +104,22 @@ const actions = {
 			return error;
 		});
 	},
-	async signIn ({ commit, dispatch }, payload) {
-		commit('GET_GROUPS', []);
+	async signIn ({ commit }, payload) {
 		return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
 		.then( user => {
-			dispatch('getUserInfo', {tok: user.user.ya, uid: user.user.uid});
 			if (user && firebase.auth().currentUser.emailVerified) {
-				firebase.auth().onAuthStateChanged(user => {
-					user.getIdToken(/* forceRefresh */ )
-					.then(idToken => {
-						commit('SET_ID_TOKEN', idToken);
-						// commit('SET_USER', user);
-						// dispatch('getUserInfo', user.user.uid);
-					})
-					.catch(err => {
-						return err;
-					});
+				firebase.auth().onAuthStateChanged(currentUser => {
+					if (currentUser) {
+						currentUser.getIdToken(/* forceRefresh */ )
+						.then(idToken => {
+							commit('SET_ID_TOKEN', idToken);
+						})
+						.catch(err => {
+							return err;
+						});
+					}
 				})
 			}
-			// dispatch('getGroups');
 			return user;
 		});
 	},
@@ -141,6 +143,12 @@ const mutations = {
 	},
 	SET_USER_INFO(state, userInfo) {
 		state.userInfo = userInfo;
+	},
+	UPDATE_USER_INFO_GROUP(state, group) {
+		if (state.userInfo.groups.includes(group.id)) {
+			return state.userInfo.groups.splice(state.userInfo.groups.indexOf(group.id), 1);
+		}
+		return state.userInfo.groups.unshift(group.id);
 	},
 	SET_IS_USER(state, isUser) {
 		state.isUser = isUser;

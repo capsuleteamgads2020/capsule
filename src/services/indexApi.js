@@ -1,6 +1,7 @@
 'use strict'
 
-import api from '@/services/api'
+import { API_BASE } from '@/services/Api'
+// import { TEST_API } from '@/services/Api'
 import axios from 'axios'
 
 export default {
@@ -9,8 +10,8 @@ export default {
 		// return api().get(`notifications/fetchAll`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/notifications/fetchAll`,
-			// url: `https://api.algoboard.com/v1/notifications/fetchAll/`,
+			// url: `${TEST_API}notifications/fetchAll`,
+			url: `${API_BASE}notifications/fetchAll/`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -24,8 +25,8 @@ export default {
 		// return api().put(`notification/updateNotification/${params.notification_id}`, params);
 		const res = await axios({
 			method: 'put',
-			url: `http://localhost:8080/v1/notification/updateNotification/${params.notification_id}`,
-			// url: `https://api.algoboard.com/v1/notification/updateNotification/${params.notification_id}`,
+			// url: `${TEST_API}notification/updateNotification/${params.notification_id}`,
+			url: `${API_BASE}notification/updateNotification/${params.notification_id}`,
 			data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
@@ -41,8 +42,8 @@ export default {
 		// return api().get(`bookmarks/fetchAll`);
 		const res = await axios({
 			method: 'get',
-			url: `http://localhost:8080/v1/bookmarks/fetchAll`,
-			// url: `https://api.algoboard.com/v1/bookmarks/fetchAll/`,
+			// url: `${TEST_API}bookmarks/fetchAll`,
+			url: `${API_BASE}bookmarks/fetchAll/`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -56,8 +57,8 @@ export default {
 		// return api().put(`bookmark/updateBookmark/${params.bookmark_id}`, params);
 		const res = await axios({
 			method: 'put',
-			url: `http://localhost:8080/v1/bookmark/updateBookmark/${params.bookmark_id}`,
-			// url: `https://api.algoboard.com/v1/bookmark/updateBookmark/${params.bookmark_id}`,
+			// url: `${TEST_API}bookmark/updateBookmark/${params.bookmark_id}`,
+			url: `${API_BASE}bookmark/updateBookmark/${params.bookmark_id}`,
 			data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
@@ -68,22 +69,34 @@ export default {
 		});
 		return res;
 	},
-	async getModerator (moderator_id, idToken) {
-		// return api().get(`moderators/fetchOne/${moderator_id}`);
-		const res = await axios({
-			method: 'get',
-			url: `http://localhost:8080/v1/moderators/fetchOne/${moderator_id}`,
-			// url: `https://api.algoboard.com/v1/moderators/fetchOne/${school_id}`,
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept': 'application/json',
-				'Authorization': `Bearer ${idToken}`,
-			},
-			json: true,
-		});
-		return res;
-	},
-	deleteModerator (moderator_id) {
-		return api().delete(`moderators/deleteOne/${moderator_id}`);
-	},
+	// async getModerator (moderator_id, idToken) {
+	// 	// return api().get(`moderators/fetchOne/${moderator_id}`);
+	// 	const res = await axios({
+	// 		method: 'get',
+	// 		// url: `${TEST_API}moderators/fetchOne/${moderator_id}`,
+	// 		url: `${API_BASE}moderators/fetchOne/${school_id}`,
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Accept': 'application/json',
+	// 			'Authorization': `Bearer ${idToken}`,
+	// 		},
+	// 		json: true,
+	// 	});
+	// 	return res;
+	// },
+	// async deleteModerator (moderator_id) {
+	// 	// return api().delete(`moderators/deleteOne/${moderator_id}`);
+	// 	const res = await axios({
+	// 		method: 'get',
+	// 		// url: `${TEST_API}moderators/fetchOne/${moderator_id}`,
+	// 		url: `${API_BASE}moderators/fetchOne/${school_id}`,
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Accept': 'application/json',
+	// 			'Authorization': `Bearer ${idToken}`,
+	// 		},
+	// 		json: true,
+	// 	});
+	// 	return res;
+	// },
 }

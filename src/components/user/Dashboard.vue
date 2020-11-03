@@ -186,13 +186,15 @@ export default {
 			return this.notifications.filter(notification => notification.read == false).length;
 		},
 		filteredGroups() {
-			// console.log(this.userInfo)
-            return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id)).length;
+			if (Object.entries(this.userInfo).length !== 0) {
+				return this.groups.filter(group => this.userInfo.groups.includes(group.id)).length;
+			}
+            return null;
         },
 	},
 	mounted() {
 		this.notification();
-		this.$store.dispatch('getGroups');
+		// this.$store.dispatch('getGroups');
 	},
 	methods: {
 		toggleMenu(val) {
@@ -205,11 +207,8 @@ export default {
 				this.$store.dispatch('getMessage', '');
 			}
 		},
-		callFunction: function () {
-            var v = this;
-            setTimeout(function () {
-				v.status = '';
-            }, 10000);
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
         },
 		enableNotification() {
 			if (this.isNotification) {

@@ -170,7 +170,7 @@ export default {
     computed: {
         ...mapGetters(['groups', 'isAdmin', 'isUser', 'user', 'userInfo']),
         filteredGroups() {
-            return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id));
+            return this.groups.filter(group => this.userInfo.groups.includes(group.id));
         },
     },
     mounted() {
@@ -249,13 +249,22 @@ export default {
                 return err;
             });
         },
+        updateGroup() {},
         Leave(group) {
+            if (!this.isUser) {
+                this.$store.dispatch('getMessage', 'Sign in to leave group');
+                this.notification();
+                return;
+            }
+            if (!this.userInfo.groups.includes(group.id)) {
+                return;
+            }
             var leaveGroup = firebase.functions().httpsCallable('leaveGroup');
             leaveGroup({id: group.id, name: group.name, user_id: this.user.uid})
             .then((res) => {
                 // Read result of the Cloud Function.
-                group.members -= 1;
-                this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
+                this.$store.dispatch('leaveGroup', group);
+                this.$store.dispatch('updateUserInfoGroup', group);
                 this.$store.dispatch('getMessage', res.data.message);
                 if (this.message != '') {
                     this.status = this.message;

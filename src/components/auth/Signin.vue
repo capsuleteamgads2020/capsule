@@ -81,16 +81,16 @@ export default {
 		onBlur(event) {
 			if (event.target.value) {
 				event.target.style.backgroundColor = '#FFFFFF';
-				event.target.style.borderBottom = "none";
+				// event.target.style.borderBottom = "none";
 				event.target.previousElementSibling.style.top = '0.2rem';
 				event.target.previousElementSibling.style.fontSize = '0.5rem';
 				event.target.previousElementSibling.style.marginTop = '0rem';
 			} else {
 				event.target.style.backgroundColor = '';
-				event.target.style.borderBottom = 'none';
-				event.target.previousElementSibling.style.top = '';
+				event.target.style.borderBottom = "1px solid #000000";
+				event.target.previousElementSibling.style.top = '0rem';
 				event.target.previousElementSibling.style.fontSize = '';
-				event.target.previousElementSibling.style.marginTop = '0.3rem';
+				event.target.previousElementSibling.style.marginTop = '0rem';
 			}
 		},
 		Toggle() { 
@@ -140,34 +140,35 @@ export default {
 	background-color: #FFFFFF;
 }
 .title {
-  text-align: center;
-  font-weight: 500;
+	text-align: center;
+	font-weight: 500;
 }
 .required:after {
-  color: #FF0000;
-  content: "*";
-  font-weight: 500;
-  padding-left: 0.5rem;
+	color: #FF0000;
+	content: "*";
+	font-weight: 500;
+	padding-left: 0.5rem;
 }
 .form-item {
-  display: inline-block;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #555;
-  border-radius: 5px;
-  width: 100%;
-  position: relative;
+	display: inline-block;
+	padding: 1rem;
+	margin-bottom: 1rem;
+	/* border: 1px solid #555; */
+	border-radius: 5px;
+	width: 100%;
+	position: relative;
+	text-align: left;
 }
 .required:after {
-  color: #FF0000;
-  content: "*";
-  font-weight: 500;
-  padding-left: 0.1rem;
+	color: #FF0000;
+	content: "*";
+	font-weight: 500;
+	padding-left: 0.1rem;
 }
-label {
-  position: absolute;
-  margin-top: 0.3rem;
-/*   top: 0.5rem; */
+label[data-v-5614e21f] {
+    position: absolute;
+    margin-top: 0rem;
+    top: 0rem;
 }
 textarea,
 input[type=text],
@@ -179,11 +180,40 @@ input[type=tel] {
 	outline: none;
 	border: none;
 	background-color: #FFFFFF;
-	/* -webkit-transform: scale(1);
-	transform: scale(1); */
+	border-bottom: 1px solid #555;
+	-webkit-transform: scale(1);
+	transform: scale(1);
 }
-input[type=text]:focus {
-  width: 100%;
+textarea,
+[type='text']:focus,
+[type='number']:focus,
+[type='date']:focus,
+[type='tel']:focus,
+[type='search']:focus,
+[type="email"]:focus,
+[type='password']:focus {
+	width: 100%;
+	padding: 0.5rem;
+	outline: none;
+	border: none;
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #000000;
+	-webkit-transform: scale(1);
+	transform: scale(1);
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+input:-internal-autofill-previewed,
+input:-internal-autofill-selected {
+	/* -webkit-text-fill-color: #ffffff !important; */
+	-webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
+	box-shadow: inset 0 0 6px #FFFFFF;
+    appearance: menulist-button;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: -internal-light-dark(white, white) !important;
 }
 .text--content {
   text-align: center;

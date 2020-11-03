@@ -46,7 +46,9 @@
 </template>
 
 <script>
+// @ is an alias to /src
 import Loader from '@/components/partials/Loader.vue'
+import { mapGetters } from 'vuex'
 export default {
 	name: 'signup',
 	components: {
@@ -55,7 +57,7 @@ export default {
 	data () {
 		return {
 			loading: false,
-			message: '',
+			// message: '',
 			errMsg: '',
 			user: {
 				name: '',
@@ -69,6 +71,7 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters(['message']),
 	},
 	methods: {
 		onFocus(event) {
@@ -88,20 +91,30 @@ export default {
 			} else {
 				event.target.style.backgroundColor = '';
 				event.target.style.borderBottom = "1px solid #000000";
-				event.target.previousElementSibling.style.top = '';
+				event.target.previousElementSibling.style.top = '0rem';
 				event.target.previousElementSibling.style.fontSize = '';
-				event.target.previousElementSibling.style.marginTop = '0.3rem';
+				event.target.previousElementSibling.style.marginTop = '0rem';
 			}
 		},
-		onlyNumbers: function() {
-		var regex = /[^0-9]/gi;
-		this.user.phone = this.user.phone.replace(regex,'');
+		validate() {
+			// checks to ensure passwords match
+			if( this.user.password != this.user.confirm_password) {
+				return false;
+			}
+			return true;
 		},
-		// onlyText: function() {
-		//   var regex = /[^0-9]/gi;
-		//   this.user.phone = this.user.phone.replace(regex,'');
-		// },user.emailVerified
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
+        },
 		onSignup () {
+			let valid = this.validate();
+			if (!valid) {
+				this.$store.dispatch('getMessage', 'Password mis-match, kindly enter unique passwords to continue.');
+				this.callFunction();
+				this.user.password = '';
+				this.user.confirm_password = '';
+				return;
+			}
 			this.loading = true
 			this.$store.dispatch('signUp',{
 				email: this.user.email,
@@ -114,14 +127,14 @@ export default {
 			.then( res => {
 				if (res.user.emailVerified) {
 					this.loading = false;
-					this.message = 'Your sign up was successful, awaiting platform approval.';
-					this.$store.dispatch('getMessage', this.message);
+					// this.message = 'Your sign up was successful, awaiting platform approval.';
+					this.$store.dispatch('getMessage', 'Your sign up was successful, awaiting platform approval.');
 					this.$router.push({ name: 'Dashboard'});
 				}
 				else {
 					this.loading = false;
-					this.message = `An email verification link has been sent to ${res.user.email}<br>Kindly verify your account to countinue using the platform.`;
-					this.$store.dispatch('getMessage', this.message);
+					var msg = `An email verification link has been sent to ${res.user.email}<br>Kindly verify your account to countinue using the platform.`;
+					this.$store.dispatch('getMessage', msg);
 					// this.$store.dispatch('signOut')
 					this.user = '';
 					// return;
@@ -131,8 +144,8 @@ export default {
 			})
 			.catch(err => {
 				this.loading = false;
-				this.message = err.message;
-				this.$store.dispatch('getMessage', this.message);
+				// this.message = err.message;
+				this.$store.dispatch('getMessage', err.message);
 				this.$router.push({ name: 'Home' });
 				return err;
 			})
@@ -142,6 +155,9 @@ export default {
 </script>
 
 <style scoped>
+.danger {
+	border-bottom: 1px solid #FF0000;
+}
 .signup {
 	background-color: #FFFFFF;
 }
@@ -157,6 +173,7 @@ export default {
 	border-radius: 5px;
 	width: 100%;
 	position: relative;
+	text-align: left;
 }
 .required:after {
 	color: #FF0000;
@@ -164,10 +181,10 @@ export default {
 	font-weight: 500;
 	padding-left: 0.1rem;
 }
-label {
-	position: absolute;
-	margin-top: 0.3rem;
-	/*   top: 0.5rem; */
+label[data-v-5614e21f] {
+    position: absolute;
+    margin-top: 0rem;
+    top: 0rem;
 }
 textarea,
 input[type=text],
@@ -179,12 +196,26 @@ input[type=tel] {
 	outline: none;
 	border: none;
 	background-color: #FFFFFF;
-	border-bottom: 1px solid #000000;
-	/* -webkit-transform: scale(1);
-	transform: scale(1); */
+	border-bottom: 1px solid #555;
+	-webkit-transform: scale(1);
+	transform: scale(1);
 }
-input[type=text]:focus {
+textarea,
+[type='text']:focus,
+[type='number']:focus,
+[type='date']:focus,
+[type='tel']:focus,
+[type='search']:focus,
+[type="email"]:focus,
+[type='password']:focus {
 	width: 100%;
+	padding: 0.5rem;
+	outline: none;
+	border: none;
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #000000;
+	-webkit-transform: scale(1);
+	transform: scale(1);
 }
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
