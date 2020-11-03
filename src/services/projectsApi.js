@@ -1,6 +1,7 @@
 'use strict'
 
-// import api from '@/services/api'
+import { API_BASE } from '@/services/Api'
+import { TEST_API } from '@/services/Api'
 import axios from 'axios'
 
 export default {
@@ -8,8 +9,8 @@ export default {
 		// return api().get(`projects/fetchAll`);
 		const res = await axios({
 			method: 'get',
-			// url: `http://localhost:8080/v1/projects/fetchAll`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/fetchAll`,
+			url: `${TEST_API}projects/fetchAll`,
+			// url: `${API_BASE}projects/fetchAll`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -20,13 +21,13 @@ export default {
 		return res;
 	},
 	async addProject (idToken, params) {
+		console.log(params)
 		// return api().post(`projects/addOne`, params);
 		const res = await axios({
 			method: 'post',
-			// url: `http://localhost:8080/v1/projects/addOne`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/addOne`,
-			// data: params,
-			params: params,
+			// url: `${TEST_API}projects/addOne`,
+			url: `${API_BASE}projects/addOne`,
+			data: params,
 			headers: { 
 				'content-type': 'application/json', 
 				'Accept': 'application/json',
@@ -40,8 +41,8 @@ export default {
 		// return api().put(`projects/updateOne/${params.id}`, params);
 		const res = await axios({
 			method: 'put',
-			// url: `http://localhost:8080/v1/projects/updateOne/${params.id}`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/updateOne/${params.id}`,
+			// url: `${TEST_API}projects/updateOne/${params.id}`,
+			url: `${API_BASE}projects/updateOne/${params.id}`,
 			data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
@@ -56,8 +57,8 @@ export default {
 		// return api().get(`projects/fetchOne/${project_id}`);
 		const res = await axios({
 			method: 'get',
-			// url: `http://localhost:8080/v1/projects/fetchOne/${project_id}`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/fetchOne/${project_id}`,
+			// url: `${TEST_API}projects/fetchOne/${project_id}`,
+			url: `${API_BASE}projects/fetchOne/${project_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -71,8 +72,8 @@ export default {
         // return api().delete(`projects/deleteOne/${project_id}`);
         const res = await axios({
             method: 'DELETE',
-			// url: `http://localhost:8080/v1/projects/deleteOne/${project_id}`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/projects/deleteOne/${project_id}`,
+			// url: `${TEST_API}projects/deleteOne/${project_id}`,
+			url: `${API_BASE}projects/deleteOne/${project_id}`,
 			// data: { answer: 42 },
 			headers: {
 				'Content-Type': 'application/json',

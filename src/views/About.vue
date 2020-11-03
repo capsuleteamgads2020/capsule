@@ -113,27 +113,27 @@ export default {
 			event.target.style.height = (25+event.target.scrollHeight)+"px";
 		},
 		onFocus(event) {
-			// event.target.style.backgroundColor = 'pink'; 
+			// event.target.style.background = 'pink';
 			event.target.style.borderBottom = "1px solid #000000";
-			event.target.previousElementSibling.style.top = '0rem';
-			event.target.previousElementSibling.style.fontSize = '1rem';
-			event.target.previousElementSibling.style.marginTop = '-0.2rem';
+			event.target.previousElementSibling.style.top = '0.2rem';
+			event.target.previousElementSibling.style.fontSize = '0.5rem';
+			event.target.previousElementSibling.style.marginTop = '0rem';
 		},
 		onBlur(event) {
 			if (event.target.value) {
 				event.target.style.backgroundColor = '#FFFFFF';
-				event.target.style.borderBottom = "none";
+				// event.target.style.borderBottom = "none";
 				event.target.previousElementSibling.style.top = '0.2rem';
 				event.target.previousElementSibling.style.fontSize = '0.5rem';
 				event.target.previousElementSibling.style.marginTop = '0rem';
 			} else {
 				event.target.style.backgroundColor = '';
-				event.target.style.borderBottom = 'none';
-				event.target.previousElementSibling.style.top = '';
+				event.target.style.borderBottom = "1px solid #000000";
+				event.target.previousElementSibling.style.top = '0rem';
 				event.target.previousElementSibling.style.fontSize = '';
-				event.target.previousElementSibling.style.marginTop = '0.3rem';
+				event.target.previousElementSibling.style.marginTop = '0rem';
 			}
-		}
+		},
 	}
 }
 </script>
@@ -146,24 +146,25 @@ export default {
 	text-align: left;
 }
 .form--item {
-  display: inline-block;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #555;
-  border-radius: 5px;
-  width: 100%;
-  position: relative;
+	display: inline-block;
+	padding: 1rem;
+	margin-bottom: 1rem;
+	border: 1px solid #555;
+	border-radius: 5px;
+	width: 100%;
+	position: relative;
+	text-align: left;
 }
 .required:after {
-  color: #FF0000;
-  content: "*";
-  font-weight: 500;
-  padding-left: 0.1rem;
+	color: #FF0000;
+	content: "*";
+	font-weight: 500;
+	padding-left: 0.1rem;
 }
-label {
-  position: absolute;
-  margin-top: 0.3rem;
-/*   top: 0.5rem; */
+label[data-v-5614e21f] {
+    position: absolute;
+    margin-top: 0rem;
+    top: 0rem;
 }
 textarea,
 input[type=text],
@@ -174,6 +175,8 @@ input[type=tel] {
 	padding: 0.5rem;
 	outline: none;
 	border: none;
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #555;
 	-webkit-transform: scale(1);
 	transform: scale(1);
 }
@@ -190,14 +193,9 @@ textarea,
 	outline: none;
 	border: none;
 	background-color: #FFFFFF;
+	border-bottom: 1px solid #000000;
 	-webkit-transform: scale(1);
 	transform: scale(1);
-}
-input[type=text]:focus, label {
-/*   font-size: 0.5rem; */
-}
-input[type=text]:focus {
-  width: 100%;
 }
 .contact--description {
 	width: 100%;

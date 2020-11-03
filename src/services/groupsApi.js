@@ -1,6 +1,7 @@
 'use strict'
 
-// import api from '@/services/api'
+import { API_BASE } from '@/services/Api'
+// import { TEST_API } from '@/services/Api'
 import axios from 'axios'
 
 export default {
@@ -8,8 +9,8 @@ export default {
 		// return api().get(`groups/fetchAll`);
 		const res = await axios({
 			// method: 'get',
-			// url: `http://localhost:8080/v1/groups/fetchAll`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/fetchAll`,
+			// url: `${TEST_API}groups/fetchAll`,
+			url: `${API_BASE}groups/fetchAll`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -23,8 +24,8 @@ export default {
 		// return api().post(`groups/addOne`, params);
 		const res = await axios({
 			method: 'post',
-			// url: `http://localhost:8080/v1/groups/addOne`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/addOne`,
+			// url: `${TEST_API}groups/addOne`,
+			url: `${API_BASE}groups/addOne`,
 			data: params,
 			// params: params,
 			headers: { 
@@ -40,8 +41,8 @@ export default {
 		// return api().put(`groups/updateOne/${params.id}`, params);
 		const res = await axios({
 			method: 'put',
-			// url: `http://localhost:8080/v1/groups/updateOne/${params.id}`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/updateOne/${params.id}`,
+			// url: `${TEST_API}groups/updateOne/${params.id}`,
+			url: `${API_BASE}groups/updateOne/${params.id}`,
 			data: JSON.stringify(params),
 			headers: { 
 				'content-type': 'application/json', 
@@ -56,8 +57,8 @@ export default {
 		// return api().get(`groups/fetchOne/${group_id}`);
 		const res = await axios({
 			method: 'get',
-			// url: `http://localhost:8080/v1/projects/fetchOne/${group_id}`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/fetchOne/${group_id}`,
+			// url: `${TEST_API}projects/fetchOne/${group_id}`,
+			url: `${API_BASE}groups/fetchOne/${group_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -71,8 +72,8 @@ export default {
         // return api().delete(`groups/deleteOne/${group_id}`);
         const res = await axios({
             method: 'DELETE',
-			// url: `http://localhost:8080/v1/groups/deleteOne/${group_id}`,
-			url: `https://capsuleteamapi.uc.r.appspot.com/v1/groups/deleteOne/${group_id}`,
+			// url: `${TEST_API}groups/deleteOne/${group_id}`,
+			url: `${API_BASE}groups/deleteOne/${group_id}`,
             // data: { answer: 42 }
         })
         return res;

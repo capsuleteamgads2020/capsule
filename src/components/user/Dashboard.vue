@@ -174,11 +174,11 @@ export default {
 		}
 	},
     watch: {
-        // filteredGroups: {
-		// 	handler() {
-		// 		this.notification();
-		// 	}
-        // },
+        filteredGroups: {
+			handler() {
+				this.notification();
+			}
+        },
     },
 	computed: {
 		...mapGetters(['notifications', 'bookmarks', 'groups', 'isUser', 'user', 'userInfo', 'message']),
@@ -187,7 +187,7 @@ export default {
 		},
 		filteredGroups() {
 			if (Object.entries(this.userInfo).length !== 0) {
-				return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id)).length;
+				return this.groups.filter(group => this.userInfo.groups.includes(group.id)).length;
 			}
             return null;
         },
@@ -207,11 +207,8 @@ export default {
 				this.$store.dispatch('getMessage', '');
 			}
 		},
-		callFunction: function () {
-            var v = this;
-            setTimeout(function () {
-				v.status = '';
-            }, 10000);
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
         },
 		enableNotification() {
 			if (this.isNotification) {

@@ -18,54 +18,59 @@
                     <button type="button" class="project--btn" @click="enterCreate">Create Project</button>
                 </div> -->
             </section><hr>
-            <section class="projects" v-for="project in filteredProjects" :key="project.id" style="position: relative;">
-                <div class="projects--item--name">
-                    <h3 class="">{{ project.name}}</h3>
-                    <div style="position: absolute; right: 0; top: 0;">
-                        <!-- <button v-if="project.owner" type="button" class="projects--icon" :class="{'projects--icon--enable': !update}" @click="updateProject()" :disabled="!update">
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
-                                <g transform="translate(10,70) scale(0.05,-0.05)">
-                                    <path fill="#000000" glyph-name="pencil" unicode="" d="M203-7l50 51-131 131-51-51v-60h72v-71h60z m291 518q0 12-12 12-5 0-9-4l-303-302q-4-4-4-10 0-12 13-12 5 0 9 4l303 302q3 4 3 10z m-30 107l232-232-464-465h-232v233z m381-54q0-29-20-50l-93-93-232 233 93 92q20 21 50 21 29 0 51-21l131-131q20-22 20-51z" horiz-adv-x="857.1">
-                                    </path>
-                                </g>
-                            </svg>
-                        </button> -->
-                        <button type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
-                                <g transform="translate(10,70) scale(0.05,-0.05)">
-                                    <path fill="#000000" glyph-name="bell-alt" unicode="" d="M509-96q0 8-9 8-33 0-57 24t-23 57q0 9-9 9t-9-9q0-41 29-70t69-28q9 0 9 9z m455 160q0-29-21-50t-50-21h-250q0-59-42-101t-101-42-101 42-42 101h-250q-29 0-50 21t-21 50q28 24 51 49t47 67 42 89 27 114 11 146q0 84 66 157t171 89q-5 10-5 21 0 23 16 38t38 16 38-16 16-38q0-11-5-21 106-16 171-89t66-157q0-78 11-146t27-114 42-89 47-67 51-49z" horiz-adv-x="1000"> </path>
-                                </g>
-                            </svg>
-                            Subscribe
-                        </button>
-                        <!-- <button v-if="!project.owner && project.subscriptions.includes(user.id)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
-                                <g transform="translate(10,70) scale(0.05,-0.05)">
-                                    <path fill="#000000" glyph-name="bell-off" unicode="" d="M869 375q34-199 167-311 0-29-22-50t-50-21h-250q0-59-42-101t-101-42-100 42-42 100z m-298-480q9 0 9 9t-9 8q-32 0-56 24t-24 57q0 9-9 9t-9-9q0-41 29-70t69-28z m560 892q4-5 4-13t-6-12l-1045-905q-5-5-13-4t-12 6l-47 53q-4 6-4 14t6 12l104 89q-11 18-11 37 28 24 51 49t47 67 42 89 28 114 11 146q0 84 65 157t171 89q-4 10-4 21 0 23 15 38t38 16 38-16 16-38q0-11-4-21 69-10 122-46t82-88l234 202q5 5 13 4t12-6z" horiz-adv-x="1142.9"> </path>
-                                </g>
-                            </svg>
-                            Unsubscribe
-                        </button> -->
+            <section v-if="!!filteredProjects.length">
+                <div v-for="project in filteredProjects" :key="project.id" class="projects" style="position: relative;">
+                    <div class="projects--item--name">
+                        <h3 class="">{{ project.name}}</h3>
+                        <div style="position: absolute; right: 0; top: 0;">
+                            <!-- <button v-if="project.owner" type="button" class="projects--icon" :class="{'projects--icon--enable': !update}" @click="updateProject()" :disabled="!update">
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
+                                    <g transform="translate(10,70) scale(0.05,-0.05)">
+                                        <path fill="#000000" glyph-name="pencil" unicode="" d="M203-7l50 51-131 131-51-51v-60h72v-71h60z m291 518q0 12-12 12-5 0-9-4l-303-302q-4-4-4-10 0-12 13-12 5 0 9 4l303 302q3 4 3 10z m-30 107l232-232-464-465h-232v233z m381-54q0-29-20-50l-93-93-232 233 93 92q20 21 50 21 29 0 51-21l131-131q20-22 20-51z" horiz-adv-x="857.1">
+                                        </path>
+                                    </g>
+                                </svg>
+                            </button> -->
+                            <button type="button" class="projects--icon--subscribe" @click="fund(project)" >
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
+                                    <g transform="translate(10,70) scale(0.05,-0.05)">
+                                        <path fill="#000000" glyph-name="bell-alt" unicode="" d="M509-96q0 8-9 8-33 0-57 24t-23 57q0 9-9 9t-9-9q0-41 29-70t69-28q9 0 9 9z m455 160q0-29-21-50t-50-21h-250q0-59-42-101t-101-42-101 42-42 101h-250q-29 0-50 21t-21 50q28 24 51 49t47 67 42 89 27 114 11 146q0 84 66 157t171 89q-5 10-5 21 0 23 16 38t38 16 38-16 16-38q0-11-5-21 106-16 171-89t66-157q0-78 11-146t27-114 42-89 47-67 51-49z" horiz-adv-x="1000"> </path>
+                                    </g>
+                                </svg>
+                                Subscribe
+                            </button>
+                            <!-- <button v-if="!project.owner && project.subscriptions.includes(user.id)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
+                                    <g transform="translate(10,70) scale(0.05,-0.05)">
+                                        <path fill="#000000" glyph-name="bell-off" unicode="" d="M869 375q34-199 167-311 0-29-22-50t-50-21h-250q0-59-42-101t-101-42-100 42-42 100z m-298-480q9 0 9 9t-9 8q-32 0-56 24t-24 57q0 9-9 9t-9-9q0-41 29-70t69-28z m560 892q4-5 4-13t-6-12l-1045-905q-5-5-13-4t-12 6l-47 53q-4 6-4 14t6 12l104 89q-11 18-11 37 28 24 51 49t47 67 42 89 28 114 11 146q0 84 65 157t171 89q-4 10-4 21 0 23 15 38t38 16 38-16 16-38q0-11-4-21 69-10 122-46t82-88l234 202q5 5 13 4t12-6z" horiz-adv-x="1142.9"> </path>
+                                    </g>
+                                </svg>
+                                Unsubscribe
+                            </button> -->
+                        </div>
+                    </div><hr>
+                    <div class="projects--item--description">
+                        <div>Description:</div>
+                        <div>{{ project.description}}</div>
                     </div>
-                </div><hr>
-                <div class="projects--item--description">
-                    <div>Description:</div>
-                    <div>{{ project.description}}</div>
+                    <div class="projects--items">
+                        <div class="projects--item--created_at">
+                            <div>Created:</div>
+                            <div>{{timer(project.created_at)}}</div>
+                        </div>
+                        <div class="projects--item--deadline">
+                            <div>Deadline:</div>
+                            <div>{{ project.time}}  ·  {{ project.deadline}}</div>
+                        </div>
+                        <div class="projects--item--contribution">
+                            <div>Contribution:</div>
+                            <div>{{project.currency}} {{ project.contribution}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="projects--items">
-                    <div class="projects--item--created_at">
-                        <div>Created:</div>
-                        <div>{{timer(project.created_at)}}</div>
-                    </div>
-                    <div class="projects--item--deadline">
-                        <div>Deadline:</div>
-                        <div>{{ project.time}}  ·  {{ project.deadline}}</div>
-                    </div>
-                    <div class="projects--item--contribution">
-                        <div>Contribution:</div>
-                        <div>{{project.currency}} {{ project.contribution}}</div>
-                    </div>
-                </div>
+            </section>
+            <section v-else>
+                <div class="projects">No project available</div>
             </section>
         </div>
 	</div>
@@ -74,6 +79,7 @@
 <script>
 // @ is an alias to /src
 import Header from '@/components/partials/Header.vue'
+import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
 	name: 'Projects',
@@ -101,9 +107,13 @@ export default {
         }
     },
 	computed: {
-        ...mapGetters(['projects', 'isUser', 'user', 'message']),
+        ...mapGetters(['projects', 'isUser', 'user', 'userInfo', 'message']),
         filteredProjects() {
-            return this.projects.filter(project => !project.subscriptions.includes(this.user.id));
+            if (this.isUser && this.userInfo) {
+                return this.projects.filter(project => !this.userInfo.projects.some(proj => proj.id === project.id));
+            }
+            return this.projects;
+            // return this.projects.filter(project => !project.subscriptions.includes(this.user.id));
         },
     },
     beforeMount() {
@@ -119,11 +129,8 @@ export default {
 		}
     },
     methods: {
-		callFunction: function () {
-            var v = this;
-            setTimeout(function () {
-				v.status = '';
-            }, 10000);
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
         },
 		toggleMenu(val) {
 			this.menu = val;
@@ -179,23 +186,31 @@ export default {
 				this.$store.dispatch('getMessage', '');
 			}
 		},
-        subscribe(project) {
+        join(project) {
             if (!this.isUser) {
                 this.$store.dispatch('getMessage', 'Sign in to fund projects!');
                 this.notification();
                 return;
             }
-
-            if (!project.subscriptions.includes(this.user.id)) {
-                project.subscriptions.push(this.user.id);
-            } else {
-                project.subscriptions.splice(project.subscriptions.indexOf(this.user.id), 1);
+            if (this.userInfo.projects.includes(project.id)) {
+                return;
             }
+            var joinProject = firebase.functions().httpsCallable('joinProject');
+            joinProject({id: project.id, user_id: this.user.uid})
+            .then((res) => {
+                // Read result of the Cloud Function.
+                this.$store.dispatch('joinProject', project);
+                this.$store.dispatch('updateUserInfoProject', project);
+                this.$store.dispatch('getMessage', res.data.message);
+                if (this.message != '') {
+                    this.status = this.message;
+                    this.callFunction();
+                }
+            })
+            .catch((error) => {
+                this.$store.dispatch('getMessage', error.message);
+            });
         },
-        // removeSubscription(project) {
-        //     project.subscriptions.splice(project.subscriptions.indexOf(this.user.id), 1);
-        //     this.subscribe = !this.subscribe
-        // },
         onDonate() {
             this.donate = true;
         },

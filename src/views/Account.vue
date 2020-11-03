@@ -57,10 +57,17 @@ export default {
 			},
 		}
 	},
+    watch: {
+        message: {
+			handler() {
+				this.notification();
+			}
+        },
+    },
 	computed: {
 		...mapGetters(['message']),
 	},
-	mounted(){
+	mounted() {
 		if (this.message != '') {
 			this.status = this.message;
 			this.callFunction();
@@ -75,11 +82,15 @@ export default {
 			console.log(msg)
 			this.callFunction();
 		},
-		callFunction: function () {
-            var v = this;
-            setTimeout(function () {
-                v.status = '';
-            }, 10000);
+		notification() {
+			if (this.message != '') {
+				this.status = this.message;
+				this.callFunction();
+				this.$store.dispatch('getMessage', '');
+			}
+		},
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
         },
 		signUp () {
 			this.isNew = true;

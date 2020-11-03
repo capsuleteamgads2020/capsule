@@ -46,7 +46,7 @@ const actions = {
 		.then(res => {
 			commit('SET_USER_INFO', res.data);
 			dispatch('getGroups');
-			// this.$store.dispatch('getProjects');
+			dispatch('getProjects');
 			// this.$store.dispatch('getBookmarks');
 			// this.$store.dispatch('getNotifications');
 			return res.data;
@@ -54,6 +54,10 @@ const actions = {
 		.catch( err => {
 			return err;
 		});
+	},
+	async updateUserInfoGroup({ commit }, group) {
+		// api call
+		commit('UPDATE_USER_INFO_GROUP', group);
 	},
 	async setIsUser({ commit }, isUser) {
 		// api call
@@ -139,6 +143,12 @@ const mutations = {
 	},
 	SET_USER_INFO(state, userInfo) {
 		state.userInfo = userInfo;
+	},
+	UPDATE_USER_INFO_GROUP(state, group) {
+		if (state.userInfo.groups.includes(group.id)) {
+			return state.userInfo.groups.splice(state.userInfo.groups.indexOf(group.id), 1);
+		}
+		return state.userInfo.groups.unshift(group.id);
 	},
 	SET_IS_USER(state, isUser) {
 		state.isUser = isUser;

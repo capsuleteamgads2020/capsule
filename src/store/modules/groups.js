@@ -139,6 +139,16 @@ const actions = {
 			return err;
 		})
     },
+	async joinGroup({ state }, group) {
+        const index = state.groups.findIndex(grp => grp.id === group.id);
+		group.members += 1;
+		return state.groups.splice(index, 1, group);
+	},
+	leaveGroup({ state }, group) {
+        const index = state.groups.findIndex(grp => grp.id === group.id);
+        group.members -= 1;
+		return state.groups.splice(index, 1, group);
+	},
 };
 
 const mutations = {

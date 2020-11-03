@@ -3,64 +3,65 @@
 import projectsApi from '@/services/projectsApi';
 
 const state = {
-	projects: [
-		{
-			active:true,
-			contribution:"10",
-			currency:"NGN",
-			created_at:1603840683104,
-			deadline:"2020-10-31",
-			description:"This is testing!!!",
-			id:"1603840683104_callis001",
-			name:"Cancer Awareness",
-			owner:false,
-			time:"06:30",
-			user:"Callis",
-            subscriptions: [],
-		},
-		{
-			active:true,
-			contribution:"35",
-			currency:"NGN",
-			created_at:1603840814612,
-			deadline:"2020-10-31",
-			description:"This is another testing!!!",
-			id:"1603840814612_callis001",
-			name:"Mental Awareness",
-			owner:false,
-			time:"06:30",
-			user:"Callis",
-            subscriptions: [],
-		},
-		{
-			active:true,
-			contribution:"15",
-			currency:"NGN",
-			created_at:1603843472426,
-			deadline:"2020-11-01",
-			description:"This is testing!!!",
-			id:"1603843472426_callis001",
-			name:"Biking Club",
-			owner:true,
-			time:"07:15",
-			user:"Callis",
-            subscriptions: ['callis001'],
-		},
-		{
-			active:true,
-			contribution:"0.5",
-			created_at:1603889279650,
-			currency:"BTC",
-			deadline:"2020-11-08",
-			description:"This is testing!!!",
-			id:"1603889279650_callis001",
-			name:"End SARS",
-			owner:false,
-			time:"18:45",
-			user:"Callis",
-            subscriptions: [],
-		}
-	],
+	// projects: [
+	// 	{
+	// 		active:true,
+	// 		contribution:"10",
+	// 		currency:"NGN",
+	// 		created_at:1603840683104,
+	// 		deadline:"2020-10-31",
+	// 		description:"This is testing!!!",
+	// 		id:"1603840683104_callis001",
+	// 		name:"Cancer Awareness",
+	// 		owner:false,
+	// 		time:"06:30",
+	// 		user:"Callis",
+    //         subscriptions: [],
+	// 	},
+	// 	{
+	// 		active:true,
+	// 		contribution:"35",
+	// 		currency:"NGN",
+	// 		created_at:1603840814612,
+	// 		deadline:"2020-10-31",
+	// 		description:"This is another testing!!!",
+	// 		id:"1603840814612_callis001",
+	// 		name:"Mental Awareness",
+	// 		owner:false,
+	// 		time:"06:30",
+	// 		user:"Callis",
+    //         subscriptions: [],
+	// 	},
+	// 	{
+	// 		active:true,
+	// 		contribution:"15",
+	// 		currency:"NGN",
+	// 		created_at:1603843472426,
+	// 		deadline:"2020-11-01",
+	// 		description:"This is testing!!!",
+	// 		id:"1603843472426_callis001",
+	// 		name:"Biking Club",
+	// 		owner:true,
+	// 		time:"07:15",
+	// 		user:"Callis",
+    //         subscriptions: ['callis001'],
+	// 	},
+	// 	{
+	// 		active:true,
+	// 		contribution:"0.5",
+	// 		created_at:1603889279650,
+	// 		currency:"BTC",
+	// 		deadline:"2020-11-08",
+	// 		description:"This is testing!!!",
+	// 		id:"1603889279650_callis001",
+	// 		name:"End SARS",
+	// 		owner:false,
+	// 		time:"18:45",
+	// 		user:"Callis",
+    //         subscriptions: [],
+	// 	}
+	// ],
+	projects: [],
 	project: {},
 };
 
@@ -73,14 +74,15 @@ const getters = {
 };
 
 const actions = {
-    async addProject({ commit, rootState }, payload) {
+    async addProject({ commit, rootGetters }, payload) {
 		// api call
-		return projectsApi.addProject(rootState.idToken, {
+		return projectsApi.addProject(rootGetters.idToken, {
 			name: payload.name,
 			description: payload.description,
 			deadline: payload.deadline,
+			group_id: payload.group_id,
 			time: payload.time,
-			contribution: payload.contribution,
+			price: payload.price,
 			currency: payload.currency,
 			owner: payload.owner,
 			created_at: payload.created_at,
@@ -95,7 +97,7 @@ const actions = {
 			return err;
 		});
     },
-    async getProject({ state, getters, commit, rootState }, payload) {
+    async getProject({ state, getters, commit, rootGetters }, payload) {
         // filter project then api call
 		if (payload.id == state.project.id) {
 			return state.project
@@ -107,7 +109,7 @@ const actions = {
 			commit('GET_PROJECT', project)
 			return project;
 		} else {
-			return projectsApi.getProject(payload.id, rootState.idToken)
+			return projectsApi.getProject(payload.id, rootGetters.idToken)
 			.then(res => {
 				commit('GET_PROJECT', res.data)
 				return res.data;
@@ -117,25 +119,25 @@ const actions = {
 			});
 		}
     },
-    async getProjects({ state, commit, rootState }) {
+    async getProjects({ state/*, commit, rootGetters */}) {
         // api call
-		if (state.projects && state.projects.length > 0) {
+		if (state.projects && !!state.projects.length) {
 			return state.projects;
 		}
 
-		return projectsApi.getProjects(rootState.idToken)
-		.then(res => {
-			commit('GET_PROJECTS', res.data);
-			return res.data;
-		})
-		.catch( err => {
-			// var message = 'There was a problem fetching events: ' + err.message
-			return err;
-		});
+		// return projectsApi.getProjects(rootGetters.idToken)
+		// .then(res => {
+		// 	commit('GET_PROJECTS', res.data);
+		// 	return res.data;
+		// })
+		// .catch( err => {
+		// 	// var message = 'There was a problem fetching events: ' + err.message
+		// 	return err;
+		// });
     },
-    async updateProject({ commit, rootState }, payload) {
+    async updateProject({ commit, rootGetters }, payload) {
         // api call
-		return projectsApi.updateProject(rootState.idToken, {
+		return projectsApi.updateProject(rootGetters.idToken, {
 			id: payload.id,
 			name: payload.name,
 			description: payload.description,
@@ -156,9 +158,9 @@ const actions = {
 			return err;
 		});
     },
-    async deleteProject({ commit, rootState }, payload) {
+    async deleteProject({ commit, rootGetters }, payload) {
         // api call
-		return projectsApi.deleteProject(rootState.idToken, payload.id)
+		return projectsApi.deleteProject(rootGetters.idToken, payload.id)
 		.then(res => {
 			// fix best case
 			commit('DELETE_PROJECT', payload);
