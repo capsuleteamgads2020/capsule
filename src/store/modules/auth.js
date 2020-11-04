@@ -59,6 +59,9 @@ const actions = {
 		// api call
 		commit('UPDATE_USER_INFO_GROUP', group);
 	},
+	updateUserInfoProject({ commit }, project) {
+		commit('UPDATE_USER_INFO_PROJECT', project);
+	},
 	async setIsUser({ commit }, isUser) {
 		// api call
 		commit('SET_IS_USER', isUser);
@@ -149,6 +152,12 @@ const mutations = {
 			return state.userInfo.groups.splice(state.userInfo.groups.indexOf(group.id), 1);
 		}
 		return state.userInfo.groups.unshift(group.id);
+	},
+	UPDATE_USER_INFO_PROJECT(state, project) {
+		if (state.userInfo.projects.includes(project.id)) {
+			return state.userInfo.projects.splice(state.userInfo.projects.indexOf(project.id), 1);
+		}
+		return state.userInfo.projects.unshift(project.id);
 	},
 	SET_IS_USER(state, isUser) {
 		state.isUser = isUser;

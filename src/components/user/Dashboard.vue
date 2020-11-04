@@ -50,11 +50,11 @@
 									42-42 101 42 101 101 42 101-42 42-101z">
 								</path>
 							</g>
-							<circle v-if="filteredGroups" cx="55" cy="35" r="10" stroke="#ff0000" stroke-width="3" fill="#ff0000"></circle>
-							<text v-if="filteredGroups" x="52" y="38" fill="#ffffff">{{ filteredGroups }}</text>
-							<line v-if="isGroup" x1="14" y1="105" x2="53" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
+							<circle v-if="groupNotifications" cx="55" cy="35" r="10" stroke="#ff0000" stroke-width="3" fill="#ff0000"></circle>
+							<text v-if="groupNotifications" x="52" y="38" fill="#ffffff">{{ groupNotifications }}</text>
 							<!-- <text x="15" y="100" fill="#DFAB24">Group</text> -->
 							<text x="15" y="100" fill="#DFAB24">Group</text>
+							<line v-if="isGroup" x1="14" y1="105" x2="53" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
 						</svg>
 						<!-- <span>Group</span> -->
 					</button>
@@ -74,7 +74,7 @@
 							</g>
 							<!-- <text x="10" y="100" fill="#DFAB24">Settings</text> -->
 							<text x="10" y="100" fill="#DFAB24">Settings</text>
-							<line v-if="isSettings" x1="10" y1="105" x2="56" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
+							<line v-if="isSettings" x1="7" y1="105" x2="56" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
 						</svg>
 						<!-- <span>Settings</span> -->
 					</button>
@@ -84,8 +84,8 @@
 							<g transform="translate(10,70) scale(0.05,-0.05)">
 								<path class="forum--icon" glyph-name="comment-empty" unicode="" d="M500 636q-114 0-213-39t-157-105-59-142q0-62 40-119t113-98l48-28-15-54q-13-50-39-96 85 36 154 96l24 21 31-3q39-5 73-5 114 0 213 39t157 105 59 142-59 142-157 105-213 39z m500-286q0-97-67-179t-182-130-251-48q-39 0-81 4-110-97-257-135-27-8-63-12h-3q-8 0-15 6t-9 15v1q-2 2 0 6t1 6 2 5l4 5t4 5 4 5q4 5 17 19t20 22 17 22 18 28 15 33 15 42q-88 50-138 123t-51 157q0 97 67 179t182 130 251 48 251-48 182-130 67-179z" horiz-adv-x="1000"> </path>
 							</g>
-							<text x="0" y="100" fill="#DFAB24">Forums</text>
-							<line v-if="isForums" x1="0" y1="105" x2="64" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
+							<text x="13" y="100" fill="#DFAB24">Forums</text>
+							<line v-if="isForums" x1="13" y1="105" x2="57" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
 						</svg>
 					</button>
 					<button class="bookmarks" @click="enableBookmarks">
@@ -107,6 +107,8 @@
 								<path class="project--icon" glyph-name="gift" unicode="" d="M518 93v400h-179v-400q0-14 10-21t26-8h107q16 0 26 8t10 21z m-255 471h109l-70 90q-15 17-39 17-22 0-38-15t-15-38 15-38 38-16z m384 54q0 22-15 38t-38 15q-24 0-39-17l-69-90h108q22 0 38 16t15 38z m210-143v-179q0-7-5-12t-13-5h-53v-233q0-22-16-37t-38-16h-607q-22 0-38 16t-16 37v233h-53q-8 0-13 5t-5 12v179q0 8 5 13t13 5h245q-51 0-88 36t-37 89 37 88 88 37q60 0 94-43l72-92 71 92q34 43 94 43 52 0 88-37t37-88-37-89-88-36h245q8 0 13-5t5-13z" horiz-adv-x="857.1">
 								</path>
 							</g>
+							<circle v-if="projectNotifications" cx="55" cy="35" r="10" stroke="#ff0000" stroke-width="3" fill="#ff0000"></circle>
+							<text v-if="projectNotifications" x="52" y="38" fill="#ffffff">{{ projectNotifications }}</text>
 							<text x="12" y="100" fill="#DFAB24">Project</text>
 							<line v-if="isProject" x1="12" y1="105" x2="52" y2="105" style="stroke: #DFAB24; stroke-width: 4;"></line>
 						</svg>
@@ -174,20 +176,31 @@ export default {
 		}
 	},
     watch: {
-        filteredGroups: {
+        groupNotifications: {
+			handler() {
+				this.notification();
+			}
+		},
+        projectNotifications: {
 			handler() {
 				this.notification();
 			}
         },
     },
 	computed: {
-		...mapGetters(['notifications', 'bookmarks', 'groups', 'isUser', 'user', 'userInfo', 'message']),
+		...mapGetters(['notifications', 'bookmarks', 'groups', 'projects', 'isUser', 'user', 'userInfo', 'message']),
 		unreadNotifications() {
 			return this.notifications.filter(notification => notification.read == false).length;
 		},
-		filteredGroups() {
+		groupNotifications() {
 			if (Object.entries(this.userInfo).length !== 0) {
 				return this.groups.filter(group => this.userInfo.groups.includes(group.id)).length;
+			}
+            return null;
+        },
+		projectNotifications() {
+			if (Object.entries(this.userInfo).length !== 0) {
+				return this.projects.filter(project => this.userInfo.projects.includes(project.id)).length;
 			}
             return null;
         },

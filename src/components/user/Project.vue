@@ -71,7 +71,7 @@
             <div class="projects--item--name">
                 <h3 class="">{{ project.name}}</h3>
                 <div style="position: absolute; right: 0; top: 0;">
-                    <button v-if="project.owner.findIndex(x => x.id === user.uid) !== -1" type="button" class="projects--icon" :class="{'projects--icon--enable': !update}" @click="updateProject()" :disabled="!update">
+                    <button v-if="projectOwner(project)" type="button" class="projects--icon" :class="{'projects--icon--enable': !update}" @click="updateProject()" :disabled="!update">
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top; margin-left: 10px;">
                             <g transform="translate(10,70) scale(0.05,-0.05)">
                                 <path fill="#000000" glyph-name="pencil" unicode="" d="M203-7l50 51-131 131-51-51v-60h72v-71h60z m291 518q0 12-12 12-5 0-9-4l-303-302q-4-4-4-10 0-12 13-12 5 0 9 4l303 302q3 4 3 10z m-30 107l232-232-464-465h-232v233z m381-54q0-29-20-50l-93-93-232 233 93 92q20 21 50 21 29 0 51-21l131-131q20-22 20-51z" horiz-adv-x="857.1">
@@ -86,15 +86,15 @@
                             </g>
                         </svg>
                         Subscribe
-                    </button>
-                    <button v-if="!project.owner && project.subscriptions.includes(user.uid)" type="button" class="projects--icon--subscribe" @click="subscribe(project)" >
+                    </button> -->
+                    <button v-if="!projectOwner(project) && userInfo.projects.includes(project.id)" type="button" class="projects--icon--subscribe" @click="leave(project)">
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
                             <g transform="translate(10,70) scale(0.05,-0.05)">
                                 <path fill="#000000" glyph-name="bell-off" unicode="" d="M869 375q34-199 167-311 0-29-22-50t-50-21h-250q0-59-42-101t-101-42-100 42-42 100z m-298-480q9 0 9 9t-9 8q-32 0-56 24t-24 57q0 9-9 9t-9-9q0-41 29-70t69-28z m560 892q4-5 4-13t-6-12l-1045-905q-5-5-13-4t-12 6l-47 53q-4 6-4 14t6 12l104 89q-11 18-11 37 28 24 51 49t47 67 42 89 28 114 11 146q0 84 65 157t171 89q-4 10-4 21 0 23 15 38t38 16 38-16 16-38q0-11-4-21 69-10 122-46t82-88l234 202q5 5 13 4t12-6z" horiz-adv-x="1142.9"> </path>
                             </g>
                         </svg>
                         Unsubscribe
-                    </button> -->
+                    </button>
                 </div>
             </div><hr>
             <div class="projects--item--description">
@@ -188,7 +188,7 @@ export default {
         ...mapGetters(['projects', 'groups', 'isAdmin', 'isUser', 'user', 'userInfo']),
         filteredProjects() {
             if (this.isUser && this.userInfo) {
-                return this.projects.filter(project => this.userInfo.projects.some(proj => proj.id === project.id));
+                return this.projects.filter(project => this.userInfo.projects.includes(project.id));
             }
             return this.projects;
         },
@@ -198,13 +198,28 @@ export default {
         // },
         userGroups() {
             // return this.userInfo.groups;
-            return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id));
-        }
+            // return this.groups.filter(group => this.userInfo.groups.some(grp => grp.id === group.id));
+            return this.groups.filter(group => this.userInfo.groups.includes(group.id));
+        },
+        projectOwner() {
+            return (project) => project.owner.findIndex(x => x.id === this.user.uid) !== -1;
+            // return project.owner.findIndex(x => x.id === this.user.uid) !== -1;
+        },
     },
     mounted() {
         this.timer();
     },
     methods: {
+		notification() {
+			if (this.message != '') {
+				this.status = this.message;
+				this.callFunction();
+				this.$store.dispatch('getMessage', '');
+			}
+		},
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
+        },
         enterCreate() {
             this.create = true;
         },
@@ -284,7 +299,7 @@ export default {
             this.create = false;
         },
         updateProject() {},
-        Leave(project) {
+        leave(project) {
             if (!this.isUser) {
                 this.$store.dispatch('getMessage', 'Sign in to leave group');
                 this.notification();
@@ -294,7 +309,7 @@ export default {
                 return;
             }
             var leaveProject = firebase.functions().httpsCallable('leaveProject');
-            leaveProject({id: project.id, user_id: this.user.uid})
+            leaveProject({id: project.id, name: project.name, user_id: this.user.uid})
             .then((res) => {
                 // Read result of the Cloud Function.
                 this.$store.dispatch('leaveGroup', project);

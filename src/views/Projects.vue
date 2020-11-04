@@ -3,6 +3,7 @@
 		<Header @toggleMenu="toggleMenu"></Header>
         <div class="projects--container">
 			<div v-if="!isUser && status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
+			<div v-else-if="isUser && status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
             <section class="project--title">
                 <h3 class="">Avialable Projects</h3>
                 <!-- <div style="position: absolute; right: 0; top: 0;">
@@ -31,7 +32,7 @@
                                     </g>
                                 </svg>
                             </button> -->
-                            <button type="button" class="projects--icon--subscribe" @click="fund(project)" >
+                            <button type="button" class="projects--icon--subscribe" @click="join(project)" >
                                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" viewBox="0 0 100 100" style="vertical-align: top;">
                                     <g transform="translate(10,70) scale(0.05,-0.05)">
                                         <path fill="#000000" glyph-name="bell-alt" unicode="" d="M509-96q0 8-9 8-33 0-57 24t-23 57q0 9-9 9t-9-9q0-41 29-70t69-28q9 0 9 9z m455 160q0-29-21-50t-50-21h-250q0-59-42-101t-101-42-101 42-42 101h-250q-29 0-50 21t-21 50q28 24 51 49t47 67 42 89 27 114 11 146q0 84 66 157t171 89q-5 10-5 21 0 23 16 38t38 16 38-16 16-38q0-11-5-21 106-16 171-89t66-157q0-78 11-146t27-114 42-89 47-67 51-49z" horiz-adv-x="1000"> </path>
@@ -106,11 +107,18 @@ export default {
             },
         }
     },
+    watch: {
+        message: {
+			handler() {
+				this.notification();
+			}
+        },
+    },
 	computed: {
         ...mapGetters(['projects', 'isUser', 'user', 'userInfo', 'message']),
         filteredProjects() {
             if (this.isUser && this.userInfo) {
-                return this.projects.filter(project => !this.userInfo.projects.some(proj => proj.id === project.id));
+                return this.projects.filter(project => !this.userInfo.projects.includes(project.id));
             }
             return this.projects;
             // return this.projects.filter(project => !project.subscriptions.includes(this.user.id));
@@ -120,7 +128,9 @@ export default {
         // this.$store.dispatch('getMessage', 'Sign in fund projects.');
     },
     mounted() {
-        this.$store.dispatch('getMessage', 'Sign in to fund projects!');
+        if (!this.isUser) {
+            this.$store.dispatch('getMessage', 'Sign in to fund projects!');
+        }
         this.timer();
         if (this.message != '') {
 			this.status = this.message;
@@ -129,6 +139,13 @@ export default {
 		}
     },
     methods: {
+		notification() {
+			if (this.message != '') {
+				this.status = this.message;
+				this.callFunction();
+				this.$store.dispatch('getMessage', '');
+			}
+		},
 		callFunction() {
 			setTimeout(() => this.status = '', 10000);
         },
@@ -179,38 +196,6 @@ export default {
 				event.target.previousElementSibling.style.marginTop = '0.3rem';
 			}
         },
-        notification() {
-			if (this.message != '') {
-				this.status = this.message;
-				this.callFunction();
-				this.$store.dispatch('getMessage', '');
-			}
-		},
-        join(project) {
-            if (!this.isUser) {
-                this.$store.dispatch('getMessage', 'Sign in to fund projects!');
-                this.notification();
-                return;
-            }
-            if (this.userInfo.projects.includes(project.id)) {
-                return;
-            }
-            var joinProject = firebase.functions().httpsCallable('joinProject');
-            joinProject({id: project.id, user_id: this.user.uid})
-            .then((res) => {
-                // Read result of the Cloud Function.
-                this.$store.dispatch('joinProject', project);
-                this.$store.dispatch('updateUserInfoProject', project);
-                this.$store.dispatch('getMessage', res.data.message);
-                if (this.message != '') {
-                    this.status = this.message;
-                    this.callFunction();
-                }
-            })
-            .catch((error) => {
-                this.$store.dispatch('getMessage', error.message);
-            });
-        },
         onDonate() {
             this.donate = true;
         },
@@ -235,6 +220,31 @@ export default {
             this.create = false;
         },
         updateProject() {},
+        join(project) {
+            if (!this.isUser) {
+                this.$store.dispatch('getMessage', 'Sign in to fund projects!');
+                this.notification();
+                return;
+            }
+            if (this.userInfo.projects.includes(project.id)) {
+                return;
+            }
+            var joinProject = firebase.functions().httpsCallable('joinProject');
+            joinProject({id: project.id, name: project.name, user_id: this.user.uid})
+            .then((res) => {
+                // Read result of the Cloud Function.
+                this.$store.dispatch('joinProject', project);
+                this.$store.dispatch('updateUserInfoProject', project);
+                this.$store.dispatch('getMessage', res.data.message);
+                if (this.message != '') {
+                    this.status = this.message;
+                    this.callFunction();
+                }
+            })
+            .catch((error) => {
+                this.$store.dispatch('getMessage', error.message);
+            });
+        },
     }
 }
 </script>

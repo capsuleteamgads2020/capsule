@@ -138,40 +138,6 @@ export default new Vuex.Store({
 			}
 			state.bookmarks.unshift(payload);
 		},
-		// JOIN_GROUP({ state }, group) {
-		// 	const index = rootState.groups.findIndex(grp => grp.id === group.id);
-		// 	if (rootState.userInfo.groups.includes(group.id)) {
-		// 		// if (index !== -1) {
-		// 		group.members -= 1;
-		// 		rootState.groups.splice(index, 1, group);
-		// 		// }
-		// 		return rootState.userInfo.groups.members.splice(rootState.userInfo.group.members.indexOf(group.id), 1);
-		// 	}
-		// 	group.members += 1;
-		// 	rootState.groups.splice(index, 1, group);
-		// 	return rootState.userInfo.groups.unshift(group.id);
-		// },
-		// LEAVE_GROUP({ rootState }, group) {
-		// 	const index = rootState.groups.findIndex(grp => grp.id === group.id);
-		// 	if (rootState.userInfo.groups.includes(group.id)) {
-		// 		// if (index !== -1) {
-		// 		group.members -= 1;
-		// 		rootState.groups.splice(index, 1, group);
-		// 		// }
-		// 		return rootState.userInfo.groups.members.splice(rootState.userInfo.group.members.indexOf(group.id), 1);
-		// 	}
-		// 	group.members += 1;
-		// 	rootState.groups.splice(index, 1, group);
-		// 	return rootState.userInfo.groups.unshift(group.id);
-		// },
-		// UPDATE_PROJECT({ rootState }, project) {
-		// 	if (rootState.userInfo.projects.includes(project.id)) {
-		// 		rootState.project.members -= 1;
-		// 		return rootState.project.members.splice(rootState.group.members.indexOf(project.id), 1);
-		// 	}
-		// 	rootState.group.members += 1;
-		// 	return rootState.userInfo.groups.unshift(project.id);
-		// },
 	},
 	modules: {
 		projects,

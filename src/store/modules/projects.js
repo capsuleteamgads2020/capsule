@@ -119,21 +119,21 @@ const actions = {
 			});
 		}
     },
-    async getProjects({ state/*, commit, rootGetters */}) {
+    async getProjects({ state, commit, rootGetters }) {
         // api call
 		if (state.projects && !!state.projects.length) {
 			return state.projects;
 		}
 
-		// return projectsApi.getProjects(rootGetters.idToken)
-		// .then(res => {
-		// 	commit('GET_PROJECTS', res.data);
-		// 	return res.data;
-		// })
-		// .catch( err => {
-		// 	// var message = 'There was a problem fetching events: ' + err.message
-		// 	return err;
-		// });
+		return projectsApi.getProjects(rootGetters.idToken)
+		.then(res => {
+			commit('GET_PROJECTS', res.data);
+			return res.data;
+		})
+		.catch( err => {
+			// var message = 'There was a problem fetching events: ' + err.message
+			return err;
+		});
     },
     async updateProject({ commit, rootGetters }, payload) {
         // api call
@@ -170,6 +170,12 @@ const actions = {
 			return err;
 		});
     },
+	async joinProject({ commit }, project) {
+        commit('JOIN_PROJECT', project);
+	},
+	async leaveProject({ commit }, project) {
+		commit('LEAVE_PROJECT', project);
+	},
 };
 
 const mutations = {
@@ -190,6 +196,16 @@ const mutations = {
     },
     DELETE_PROJECT(state, payload) {
         state.projects = state.projects.filter(project => project.id !== payload.id);
+    },
+    JOIN_PROJECT(state, project) {
+        const index = state.projects.findIndex(proj => proj.id === project.id);
+		project.members += 1;
+		state.projects.splice(index, 1, project);
+    },
+    LEAVE_PROJECT(state, project) {
+        const index = state.projects.findIndex(proj => proj.id === project.id);
+        project.members -= 1;
+		state.projects.splice(index, 1, project);
     },
 };
 

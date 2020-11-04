@@ -125,7 +125,7 @@ export default {
                 return;
             }
             var joinGroup = firebase.functions().httpsCallable('joinGroup');
-            joinGroup({id: group.id, user_id: this.user.uid})
+            joinGroup({id: group.id, name: group.name, user_id: this.user.uid})
             .then((res) => {
                 // Read result of the Cloud Function.
                 this.$store.dispatch('joinGroup', group);
