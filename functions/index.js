@@ -8,7 +8,7 @@ let FieldValue = require('firebase-admin').firestore.FieldValue;
 admin.initializeApp();
 
 /**
- * [START Add Users ]
+ * [START ADD USER ]
  * Detect when new readings are posted,
  * use the functions.firestore.document().onCreate Cloud Functions 
  * to trigger code when a new object is created at a given path of the Cloud Firestore.
@@ -36,39 +36,71 @@ exports.addUser = functions.firestore.document('users/{userId}')
         })
     }
 );
-// [END Add Admin ]
+// [END ADD USER ]
 
+/**
+ * [START JOIN GROUP ]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 exports.joinGroup = functions.https.onCall(async (data, context) => {
     // ...
     return admin.firestore().collection('users').doc(context.auth.uid).update({
-        groups: admin.firestore.FieldValue.arrayUnion({id: data.id, name: data.name}),
+        groups: admin.firestore.FieldValue.arrayUnion(data.id),
     })
     .then(async () => {
         return await admin.firestore().collection('groups').doc(data.id).update({
             members: admin.firestore.FieldValue.arrayUnion(data.user_id),
         })
     })
-    .then(() => {
+    .then(async () => {
+        const projects = await admin.firestore().collection('projects').where('group_id', '==', data.id).get();
+        projects.forEach(async project => {
+            await admin.firestore().collection('projects').doc(project.id).update({
+                subscribers: admin.firestore.FieldValue.arrayUnion(data.user_id),
+            });
+        });
         return {message: `You have successfully joined ${data.name} group!`}
     })
+    // .then(() => {
+    //     return {message: `You have successfully joined ${data.name} group!`}
+    // })
     .catch(() => {
         // return err;
         throw new functions.https.HttpsError(`Unable to join ${data.name} group! Try again later`);
     })
 });
+// [END JOIN GROUP ]
 
+/**
+ * [START LEAVE GROUP ]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 exports.leaveGroup = functions.https.onCall(async (data, context) => {
     // ...
     // this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
     return admin.firestore().collection('users').doc(context.auth.uid).update({
-        groups: admin.firestore.FieldValue.arrayRemove(data),
+        groups: admin.firestore.FieldValue.arrayRemove(data.id),
     })
     .then(async () => {
         return await admin.firestore().collection('groups').doc(data.id).update({
             members: admin.firestore.FieldValue.arrayRemove(data.user_id),
         })
+    })
+    .then(async () => {
+        const projects = await admin.firestore().collection('projects').where('group_id', '==', data.id).get();
+        return projects.forEach(async project => {
+            await admin.firestore().collection('projects').doc(project.id).update({
+                subscribers: admin.firestore.FieldValue.arrayRemove(data.user_id),
+            });
+        });
     })
     .then(() => {
         return {message: `You have successfully left ${data.name} group!`};
@@ -76,8 +108,97 @@ exports.leaveGroup = functions.https.onCall(async (data, context) => {
     .catch(() => {
         // return err;
         throw new functions.https.HttpsError(`Unable to leave ${data.name} group! Try again later`);
+    });
+});
+// [END LEAVE GROUP ]
+
+/**
+ * [START FUND PROJECT ]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
+// Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
+exports.joinProject = functions.https.onCall(async (data, context) => {
+    // ...
+    return admin.firestore().collection('users').doc(context.auth.uid).update({
+        projects: admin.firestore.FieldValue.arrayUnion(data.id),
+    })
+    .then(async () => {
+        return await admin.firestore().collection('projects').doc(data.id).update({
+            members: admin.firestore.FieldValue.arrayUnion(data.user_id),
+        })
+    })
+    .then(() => {
+        return {message: `You have successfully joined ${data.name} project!`}
+    })
+    .catch(() => {
+        // return err;
+        throw new functions.https.HttpsError(`Unable to join ${data.name} project! Try again later`);
     })
 });
+// [END FUND PROJECT ]
+
+/**
+ * [START UNFUND PROJECT ]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
+// Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
+exports.leaveProject = functions.https.onCall(async (data, context) => {
+    // ...
+    // this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
+    return admin.firestore().collection('users').doc(context.auth.uid).update({
+        projects: admin.firestore.FieldValue.arrayRemove(data.id),
+    })
+    .then(async () => {
+        return await admin.firestore().collection('projects').doc(data.id).update({
+            members: admin.firestore.FieldValue.arrayRemove(data.user_id),
+        })
+    })
+    .then(() => {
+        return {message: `You have successfully left ${data.name} project!`};
+    })
+    .catch(() => {
+        // return err;
+        throw new functions.https.HttpsError(`Unable to leave ${data.name} project! Try again later`);
+    });
+});
+// [END UNFUND PROJECT ]
+
+/**
+ * [START ADD PROJECT ]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
+exports.addProject = functions.firestore.document('projects/{projectId}')
+.onCreate(
+    async (snap, context) => {
+        const group_id = snap.data().group_id;
+        const group = await admin.firestore().collection('groups').doc(group_id).get();
+
+        group.data().members.forEach(member => {
+            admin.firestore().collection('projects').doc(context.params.projectId).update({
+                subscribers: admin.firestore.FieldValue.arrayUnion(member),
+            })
+        })
+        .then(() => {
+            return {message: `Success! Project group members updated.`};
+        })
+        .catch(() => {
+            // return err;
+            throw new functions.https.HttpsError(`Unable to add subscribers to ${snap.name} project! Contact admin!`);
+        });
+    }
+);
+// [END ADD PROJECT ]
+
+
 
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 // exports.projectSubscription = functions.https.onCall((data, context) => {

@@ -14,7 +14,7 @@ const router = express.Router();
  * Retrieve projects (up to ten at a time).
  */
 router.get('/fetchAll', checkIfIsUser, async (req, res, next) => {
-    await admin.firestore().collection('projects').where('members', 'array-contains',  req.authId).get()
+    await admin.firestore().collection('projects').where('subscribers', 'array-contains',  req.authId).get()
     .then(snapshot => {
         if (snapshot.empty) {
             res.send(`No query data received from database!`);
@@ -40,7 +40,7 @@ router.get('/fetchAll', checkIfIsUser, async (req, res, next) => {
             project.update_at = doc.data().update_at;
             project.active = doc.data().active;
             project.contribution = contribution;
-            project.subscribers = doc.data().subscribers.length;
+            project.members = doc.data().members.length;
             project.rating = rating;
             projects.push(project);
         })
@@ -61,6 +61,7 @@ router.get('/fetchAll', checkIfIsUser, async (req, res, next) => {
  * Create a new project.
  */
 router.post('/addOne', checkIfIsUser, async (req, res, next) => {
+    console.log(req.body)
     // Add project data to firestore
     await admin.firestore().collection('projects').add({
         name: req.body.name,
@@ -71,6 +72,7 @@ router.post('/addOne', checkIfIsUser, async (req, res, next) => {
         currency: req.body.currency,
         owner: req.body.owner,
         group_id: req.body.group_id,
+        // groups: [],
         contribution: [],
         members: [],
         subscribers: [],
@@ -153,7 +155,7 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
         project.update_at = doc.data().update_at;
         project.active = doc.data().active;
         project.contribution = contribution;
-        project.subscribers = doc.data().subscribers.length;
+        project.members = doc.data().members.length;
         project.rating = rating;
         res.status(200).json(project);
     })

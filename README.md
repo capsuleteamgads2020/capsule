@@ -25,6 +25,11 @@ gcloud app deploy --quiet
 gcloud app browse
 ```
 
+### Run firebase cloud functions locally
+```
+firebase serve
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cloud.google.com/appengine/docs/standard/nodejs/quickstart#local-machine_1).
 
