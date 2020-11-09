@@ -20,8 +20,24 @@
                     <div class="settings--body">   
                         <form class="form">
                             <div class="form-item">
-                                <label for="avatar" class="required">Avatar: </label>
-                                <input type="file" name="avatar" id="avatar" :disabled="disabledAvatar" @focus="onFocus($event)" @blur="onBlur($event)" aria-required="true" aria-invalid="false" required style="color: -internal-light-dark(white, white) !important;"/>
+                                <button type="button" class="settings--image--button">
+                                    <img :alt="user.displayName" src="../../assets/avatar.jpeg">
+                                    <!-- <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="250" height="250" viewBox="0 0 100 100">
+                                        <g transform="translate(10,70) scale(0.05,-0.05)">
+                                            <path glyph-name="user" unicode="" fill="#adadad" d="M786 66q0-67-41-106t-108-39h-488q-67 0-108 39t-41 106q0 30 2 58t8 61 15 60 24 55 34 45 48 30 62 11q5 0 24-12t41-27 60-27 75-12 74 12 61 27 41 27 24 12q34 0 62-11t48-30 34-45 24-55 15-60 8-61 2-58z m-179 498q0-88-63-151t-151-63-152 63-62 151 62 152 152 63 151-63 63-152z">
+                                            </path>
+                                        </g>
+                                    </svg> -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40" viewBox="0 0 100 100">
+                                        <g transform="translate(10,70) scale(0.05,-0.05)">
+                                            <path fill="blue" glyph-name="picture-2" unicode="" d="M357 529q0-45-31-76t-76-32-76 32-31 76 31 75 76 32 76-32 31-75z m572-215v-250h-786v107l178 179 90-89 285 285z m53 393h-893q-7 0-12-5t-6-13v-678q0-7 6-13t12-5h893q7 0 13 5t5 13v678q0 8-5 13t-13 5z m89-18v-678q0-37-26-63t-63-27h-893q-36 0-63 27t-26 63v678q0 37 26 63t63 27h893q37 0 63-27t26-63z">
+                                            </path>
+                                        </g>
+                                    </svg>
+                                </button>
+                                <label for="avatar" class="required">
+                                    <input type="file" name="avatar" id="avatar" :disabled="disabledAvatar" @focus="onFocus($event)" @blur="onBlur($event)" aria-required="true" aria-invalid="false" required style="color: -internal-light-dark(white, white) !important;"/>
+                                </label>
                             </div>
                         </form>
                     </div>
@@ -210,6 +226,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
 	name: 'Settings',
     data() {
@@ -228,6 +245,9 @@ export default {
             new_password: '',
             confirm_password: '',
         }
+    },
+	computed: {
+        ...mapGetters(['user', 'userInfo', 'message']),
     },
     mounted() {
         // this.onBlur()
@@ -291,6 +311,23 @@ export default {
     border-color: #edf2f7; */
 }.settings:hover {
     background-color:#f7fafc;
+}
+.settings--image--button {
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 0;
+    /* color: inherit; */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    margin: 0;
+}
+input[type="file"] {
+    position: absolute;
+    top: -500px;
 }
 .settings .avatar,
 .settings .bio,

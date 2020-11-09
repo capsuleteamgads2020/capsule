@@ -47,6 +47,7 @@ const actions = {
 			commit('SET_USER_INFO', res.data);
 			dispatch('getGroups');
 			dispatch('getProjects');
+			dispatch('getComments');
 			// this.$store.dispatch('getBookmarks');
 			// this.$store.dispatch('getNotifications');
 			return res.data;
@@ -149,8 +150,14 @@ const mutations = {
 	},
 	UPDATE_USER_INFO_GROUP(state, group) {
 		if (state.userInfo.groups.includes(group.id)) {
+			group.keywords.forEach(keyword => {
+				state.userInfo.keywords.splice(state.userInfo.keywords.indexOf(keyword), 1);
+			});
 			return state.userInfo.groups.splice(state.userInfo.groups.indexOf(group.id), 1);
 		}
+		group.keywords.forEach(keyword => {
+			state.userInfo.keywords.unshift(keyword);
+		});
 		return state.userInfo.groups.unshift(group.id);
 	},
 	UPDATE_USER_INFO_PROJECT(state, project) {

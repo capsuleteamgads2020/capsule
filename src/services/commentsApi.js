@@ -5,12 +5,12 @@ import { API_BASE } from '@/services/Api'
 import axios from 'axios'
 
 export default {
-	async getComments (idToken, uiser_id) {
+	async getComments (idToken, user_id) {
 		// return api().get(`comments/fetchAll/${uiser_id}`);
 		const res = await axios({
 			method: 'get',
-			// url: `${TEST_API}comments/fetchAll/${uiser_id}`,
-			url: `${API_BASE}comments/fetchAll/${uiser_id}`,
+			// url: `${TEST_API}comments/fetchAll/${user_id}`,
+			url: `${API_BASE}comments/fetchAll/${user_id}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -26,8 +26,7 @@ export default {
 			method: 'post',
 			// url: `${TEST_API}comments/addOne`,
 			url: `${API_BASE}comments/addOne`,
-			// data: params,
-			params: params,
+			data: params,
 			headers: { 
 				'content-type': 'application/json', 
 				'Accept': 'application/json',
@@ -54,7 +53,7 @@ export default {
 		});
 		return res;
 	},
-	async getComment (comment_id, idToken) {
+	async getComment (idToken, comment_id) {
 		// return api().get(`comments/fetchOne/${comment_id}`);
 		const res = await axios({
 			method: 'get',
@@ -78,5 +77,21 @@ export default {
             // data: { answer: 42 }
         })
         return res;
+	},
+	async addReply(idToken, reply) {
+		// return api().post(`comments/addReply`, params);
+		const res = await axios({
+			method: 'post',
+			// url: `${TEST_API}comments/addReply`,
+			url: `${API_BASE}comments/addReply`,
+			data: reply,
+			headers: { 
+				'content-type': 'application/json', 
+				'Accept': 'application/json',
+				'Authorization': `Bearer ${idToken}`, 
+			},
+			json: true,
+		});
+		return res;
 	},
 }

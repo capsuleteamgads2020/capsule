@@ -3,44 +3,7 @@
 import groupsApi from '@/services/groupsApi';
 
 const state = {
-	// groups: [
-    //     {
-    //         name: 'Breast Cancer Prevention',
-    //         rating: 4,
-    //         members: [],
-    //         description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit perferendis voluptatibus exercitationem cupiditate doloremque sapiente, repellendus veniam quidem dicta perspiciatis officia itaque earum facilis vitae, odio minus praesentium voluptatum qui?',
-    //         id: 1,
-    //     },
-    //     {
-    //         name: 'Fitness',
-    //         rating: 5,
-    //         members: [],
-    //         description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit perferendis voluptatibus exercitationem cupiditate doloremque sapiente, repellendus veniam quidem dicta perspiciatis officia itaque earum facilis vitae, odio minus praesentium voluptatum qui?',
-    //         id: 2,
-    //     },
-    //     {
-    //         name: 'Mental Health',
-    //         rating: 5,
-    //         members: [],
-    //         description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit perferendis voluptatibus exercitationem cupiditate doloremque sapiente, repellendus veniam quidem dicta perspiciatis officia itaque earum facilis vitae, odio minus praesentium voluptatum qui?',                  
-    //         id: 3,
-    //     },
-    //     {
-    //         name: 'Diabetes Prevention',
-    //         rating: 3,
-    //         members: [],
-    //         description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit perferendis voluptatibus exercitationem cupiditate doloremque sapiente, repellendus veniam quidem dicta perspiciatis officia itaque earum facilis vitae, odio minus praesentium voluptatum qui?',                  
-    //         id: 4,
-    //     },
-    //     {
-    //         name: 'Anti-Rape Advocate',
-    //         rating: 4,
-    //         members: [],
-    //         description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit perferendis voluptatibus exercitationem cupiditate doloremque sapiente, repellendus veniam quidem dicta perspiciatis officia itaque earum facilis vitae, odio minus praesentium voluptatum qui?',                  
-    //         id: 5,
-    //     },
-    // ],
-    groups: [],
+	groups: [],
     group: {},
 };
 
@@ -58,6 +21,7 @@ const actions = {
         return groupsApi.addGroup(rootGetters.idToken, {
 			name: payload.name,
             description: payload.description,
+            keywords: payload.keywords,
             partners: payload.partners,
             created_at: payload.created_at,
             members: [],

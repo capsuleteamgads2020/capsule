@@ -1,5 +1,10 @@
 <template>
     <div>
+        <transition name="fade">
+			<div v-if="loading" class="loading">
+				<Loader class="loader" :loading="loading"></Loader>
+			</div>
+		</transition>
 		<div v-if="status" style="color: #ff0000; background-color: #fff; padding: .5rem 0; text-align: center;" v-html="status"></div>
 	<!-- <div class="container" ref="" :class="{active: menu}"> -->
 		<!-- <Header @toggleMenu="toggleMenu"></Header> -->
@@ -67,17 +72,20 @@
 <script>
 // @ is an alias to /src
 // import Header from '@/components/partials/Header.vue'
+import Loader from '@/components/partials/Loader.vue'
 import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
     name: 'Groups',
     components: {
         // Header,
+        Loader,
     },
     data() {
         return {
             menu: false,
             status,
+            loading: false,
         }
     },
     watch: {
@@ -124,6 +132,7 @@ export default {
             if (this.userInfo.groups.includes(group.id)) {
                 return;
             }
+            this.loading = true;
             var joinGroup = firebase.functions().httpsCallable('joinGroup');
             joinGroup({id: group.id, name: group.name, user_id: this.user.uid})
             .then((res) => {
@@ -135,6 +144,7 @@ export default {
                     this.status = this.message;
                     this.callFunction();
                 }
+                this.loading = false;
             })
             .catch((error) => {
                 this.$store.dispatch('getMessage', error.message);

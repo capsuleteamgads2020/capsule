@@ -37,7 +37,7 @@
 						</div>
 						<div v-if="focus || files.length > 0" class="comment--content--divider"></div>
 						<div class="comment--options">
-							<div class="comment--files">
+							<!-- <div class="comment--files">
 								<div class="comment--image">
 									<button type="button" class="comment--image--button" :class="{'comment--image--button--enable': file}" :disabled="file" name="commentButton" @click="addFiles()">
 										<svg viewBox="0 0 24 24" class="comment--image--button--icon">
@@ -54,7 +54,7 @@
 										<input type="file" id="file" ref="file" name="file" accept="image/*" @change="handleFilesUpload()"/>
 									</label>
 								</div>
-							</div>
+							</div> -->
 							<div class="comment--controls" v-if="commentCounter">
 								<div class="comment--counter">
 									<svg class="comment--counter--icon" viewBox="0 0 20 20">
@@ -125,11 +125,11 @@
 										</svg>
 										<span class="comments--reply--count">{{ comment.replies.length }}</span>
 									</button>
-									<button type="button" class="comments--like--button" @click="onLike(comment, user.id)">
+									<button type="button" class="comments--like--button" @click="onLike(comment, user.uid)">
 										<svg viewBox="0 0 24 24" class="comments--like--button--icon">
 											<g>
 												<path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.225c-2.08 0-3.903 1.988-3.903 4.255 0 5.74 7.034 11.596 8.55 11.658 1.518-.062 8.55-5.917 8.55-11.658 0-2.267-1.823-4.255-3.903-4.255-2.528 0-3.94 2.936-3.952 2.965-.23.562-1.156.562-1.387 0-.014-.03-1.425-2.965-3.954-2.965z"></path>
-												<path v-if="comment.likes.includes(user.id)" :class="{like: comment.likes.includes(user.id)}" d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"></path>
+												<path v-if="comment.likes.includes(user.uid)" :class="{like: comment.likes.includes(user.uid)? true : false}" d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"></path>
 											</g>
 										</svg>
 										<span class="comments--like--count">{{ comment.likes.length }}</span>
@@ -276,6 +276,7 @@
 <script>
 // @ is an alias to /src
 // import Header from '@/components/partials/Header.vue'
+import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
 	name: 'Forum',
@@ -298,6 +299,8 @@ export default {
 			initial: 56.5487,
 			// current: 56.5487,
 			count: 0,
+			files_urls: [],
+			keywords: [],
 			comment: '',
 			reply: '',
 		}
@@ -337,25 +340,20 @@ export default {
 		},
 		likes() {
             return this.comments.filter(comment => {
-                comment.likes.includes(this.user.id);
+                comment.likes.includes(this.user.uid);
             })
 		},
 		like() {
-			return this.comments.some(comment => comment.likes.includes(this.user.id));
+			return this.comments.some(comment => comment.likes.includes(this.user.uid));
 			// return (this.comments.some(comment => comment.likes.includes(this.user.id)));
 		},
-		...mapGetters(['comments', 'user']),
+		...mapGetters(['comments', 'user', 'userInfo', 'idToken']),
 	},
 	mounted() {
         // setInterval(this.myTimer(), 1000);
         this.timer();
     },
 	methods: {
-		onWrite(event) {
-			if (event) {
-				this.focus = true;
-			}
-		},
 		toggleMenu(val) {
 			this.menu = val;
 		},
@@ -363,6 +361,31 @@ export default {
             const millis = Date.now() - ref_time;
 
             return Math.floor(millis / 1000) < 60? Math.floor(millis / 1000) + 's' : Math.floor(millis / 1000 / 60) < 60 ? Math.floor(millis / 1000 / 60) + 'm' :  Math.floor(millis / 1000 / 60 / 60) < 24 ? Math.floor(millis / 1000 / 60 / 60) + 'h' : Math.floor(millis / 1000 / 60 / 60 / 24) + 'd';
+		},
+		search_word(title, keyword){
+			var text = title.toLowerCase();
+			var word = keyword.toLowerCase();
+			var x = 0, y = 0;
+		
+			for (var i = 0; i < text.length; i++) {
+				if(text[i] == word[0]) {
+					for(var j = i; j < i+word.length; j++) {
+						if(text[j] == word[j-i]) {
+							y++;
+						}
+						if (y == word.length) {
+							x++;
+						}
+					}
+					y=0;
+				}
+			}
+			return x? word : '';
+		},
+		onWrite(event) {
+			if (event) {
+				this.focus = true;
+			}
 		},
 		// Multi line textarea: https://stackoverflow.com/a/51908469 also check: https://github.com/facebook/flow/issues/2050#issuecomment-326773333
 		textAreaAdjust(event) {
@@ -442,61 +465,92 @@ export default {
         },
 		onLike (comment, id) {
             if (!comment.likes.includes(id)) {
-                comment.likes.push(id);
+				var likeComment = firebase.functions().httpsCallable('likeComment');
+				likeComment({id: comment.id, user_id: this.user.uid})
+				.then((res) => {
+					// Read result of the Cloud Function.
+					this.$store.dispatch('likeComment', comment);
+					this.$store.dispatch('getMessage', res.data.message);
+					if (this.message != '') {
+						this.status = this.message;
+						this.callFunction();
+					}
+				})
+				.catch((error) => {
+					this.$store.dispatch('getMessage', error.message);
+				});
             } else {
-                comment.likes.splice(comment.likes.indexOf(id), 1);
+				var unlikeComment = firebase.functions().httpsCallable('unlikeComment');
+				unlikeComment({id: comment.id, user_id: this.user.uid})
+				.then((res) => {
+					// Read result of the Cloud Function.
+					this.$store.dispatch('likeComment', comment);
+					this.$store.dispatch('getMessage', res.data.message);
+					if (this.message != '') {
+						this.status = this.message;
+						this.callFunction();
+					}
+				})
+				.catch((error) => {
+					this.$store.dispatch('getMessage', error.message);
+				});
             }
-            this.submitComment();
 		},
 		bookmark(comment) {
 			this.$store.dispatch('updateBookmark', comment)
 		},
 		submitComment() {
 			this.$refs.comment.style.height = '36px';
+			this.userInfo.keywords.forEach(keyword => {
+				const res = this.search_word(this.comment, keyword);
+				if (res) {
+					this.keywords.push(res);
+				}				
+			})
             if(this.comment != '') {
-                // var comment = {
-                //     id: Date.now() + '_' + this.user.id,
-                //     admin: false,
-                //     user: this.user.full_name,
-                //     avatar: this.user.avatar,
-				// 	comment: this.comment,
-				// 	files_urls: [],
-                //     created_at: Date.now(),
-                //     likes: [],
-                //     replies: [],
-                // };
-				// this.comment = '';
+                var comment = {
+                    comment_id: Date.now() + '_' + this.user.uid,
+                    admin: false,
+                    user: this.user.displayName,
+					avatar: this.user.photoURL,
+					keywords: this.keywords,
+					comment: this.comment,
+					files_urls: [],
+                    created_at: Date.now(),
+                    likes: [],
+                    replies: [],
+				};
+				this.$store.dispatch('addComment', comment)
+				.then(() => {
+					this.comment = '';
+				})
+				.catch(err => {
+					return err;
+				});
             }
 		},
-		// submitFiles(val) {
-		// 	// var files_urls = [];
-		// 	if (this.files.length > 0) {
-		// 		// Initialize the form data
-		// 		let formData = new FormData();
-		// 		// Iteate over any file sent over appending the files to the form data.
-		// 		for( var i = 0; i < this.files.length; i++ ){
-		// 			let file = this.files[i];
-		// 			formData.append('files[' + i + ']', file);
-		// 		}
-		// 		// Make the request to the POST /select-files URL
-		// 		this.submitComment();
-		// 	}
-		// },
-		submitReply(val, index) {
+		submitReply(comment, index) {
 			this.$refs.reply[index].style.height = '36px';
             if(this.reply != '') {
-                let comment = this.comments.find(comment => comment.id === val.id);
-                comment.replies.push({
-                    id: Date.now() + '_' + this.user.id,
+                
+                let reply = {
+					reply_id: Date.now() + '_' + this.user.id,
+					comment_id: comment.id,
                     admin: false,
-                    user: this.user.full_name,
-                    avatar: this.user.avatar,
+                    user: this.user.displayName,
+                    avatar: this.user.photoURL,
                     reply: this.reply,
                     created_at: Date.now(),
-                });
-				this.reply = '';
-				this.active = '';
-                this.submitComment();
+				};
+				this.$store.dispatch('addReply', reply)
+				.then(() => {
+					this.reply = '';
+					this.active = '';
+				})
+				.catch(err => {
+					return err;
+				});
+                // this.submitComment();
             }
         },
 	},

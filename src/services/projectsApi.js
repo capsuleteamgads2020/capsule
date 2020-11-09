@@ -1,7 +1,7 @@
 'use strict'
 
 import { API_BASE } from '@/services/Api'
-import { TEST_API } from '@/services/Api'
+// import { TEST_API } from '@/services/Api'
 import axios from 'axios'
 
 export default {
@@ -9,8 +9,8 @@ export default {
 		// return api().get(`projects/fetchAll`);
 		const res = await axios({
 			method: 'get',
-			url: `${TEST_API}projects/fetchAll`,
-			// url: `${API_BASE}projects/fetchAll`,
+			// url: `${TEST_API}projects/fetchAll`,
+			url: `${API_BASE}projects/fetchAll`,
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -21,7 +21,6 @@ export default {
 		return res;
 	},
 	async addProject (idToken, params) {
-		console.log(params)
 		// return api().post(`projects/addOne`, params);
 		const res = await axios({
 			method: 'post',

@@ -3,68 +3,7 @@
 import commentsApi from '@/services/commentsApi';
 
 const state = {
-	comments: [
-        {
-            admin:false,
-            avatar:"../assets/avatar.jpeg",
-            comment:"Hey!",
-            created_at:1603731906678,
-            id:"1603731906678_callis001",
-            likes:[],
-            replies:[],
-            user:"Callis",
-        },
-        {
-            admin:false,
-            avatar:"../assets/avatar.jpeg",
-            comment:"How are you?\n",
-            created_at:1603734156223,
-            id:"1603734156223_callis001",
-            likes:[],
-            replies:[],
-            user:"Callis",
-        },
-        {
-            admin:false,
-            avatar:"../assets/avatar.jpeg",
-            comment:"Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio adipisci minus aut quis quae dolorum laborum. Necessitatibus consequuntur laborum distinctio culpa aliquam fugiat maiores harum debitis alias aperiam, accusamus sed?",
-            created_at:1603734959652,
-            id:"1603734959652_callis001",
-            likes:[],
-            replies:[],
-            user:"Callis",
-        },
-        {
-            admin:false,
-            avatar:"../assets/avatar.jpeg",
-            comment:"Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio adipisci minus aut quis quae dolorum laborum. Necessitatibus consequuntur laborum distinctio culpa aliquam fugiat maiores harum debitis alias aperiam, accusamus sed?",
-            created_at:1603738545022,
-            id:"1603738545022_callis001",
-            likes:[],
-            replies:[],
-            user:"Callis",
-        },
-        {
-            admin:false,
-            avatar:"../assets/avatar.jpeg",
-            comment:"Finally",
-            created_at:1603772543218,
-            id:"1603772543218_callis001",
-            likes:[],
-            replies:[],
-            user:"Callis",
-        },
-        {
-            admin:false,
-            avatar:"../assets/avatar.jpeg",
-            comment:"Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio adipisci minus aut quis quae dolorum laborum.",
-            created_at:1603772732825,
-            id:"1603772732825_callis001",
-            likes:[],
-            replies:[],
-            user:"Callis",
-        },
-    ],
+    comments: [],
 	comment: {},
 };
 
@@ -77,11 +16,9 @@ const getters = {
 };
 
 const actions = {
-    async addComment({ commit, rootState }, payload) {
+    async addComment({ commit, rootGetters }, payload) {
         // api call
-        return commentsApi.addComment(rootState.idToken, {
-			comment: payload.comment,
-		})
+        return commentsApi.addComment(rootGetters.idToken, payload)
 		.then(res => {
 			// commit comment
 			commit('ADD_COMMENT', payload);
@@ -91,7 +28,7 @@ const actions = {
 			return err;
 		});
     },
-    async getComment({ state, getters, commit, rootState }, payload) {
+    async getComment({ state, getters, commit, rootGetters }, payload) {
         // filter comment then api call
         if (payload.id == state.comment.id) {
 			return state.comment
@@ -103,7 +40,7 @@ const actions = {
 			commit('GET_COMMENT', comment)
 			return comment;
 		} else {
-			return commentsApi.getComment(rootState.idToken, payload.id)
+			return commentsApi.getComment(rootGetters.idToken, payload.id)
 			.then(res => {
 				commit('GET_COMMENT', res.data)
 				return res.data;
@@ -113,13 +50,13 @@ const actions = {
 			});
 		}
     },
-    async getComments({ state, commit, rootState }) {
+    async getComments({ state, commit, rootGetters }) {
         // api call
         if (state.comments && state.comments.length > 0) {
 			return state.comments;
 		}
 
-		return commentsApi.getComments(rootState.idToken, rootState.user.uid)
+		return commentsApi.getComments(rootGetters.idToken, rootGetters.user.uid)
 		.then(res => {
 			commit('GET_COMMENTS', res.data);
 			return res.data;
@@ -129,9 +66,9 @@ const actions = {
 			return err;
 		});
     },
-    async updateComment({ commit, rootState }, payload) {
+    async updateComment({ commit, rootGetters }, payload) {
         // api call
-        return commentsApi.updateComment(rootState.idToken, {
+        return commentsApi.updateComment(rootGetters.idToken, {
 			id: payload.id,
 			reply: payload.reply,
 		})
@@ -144,10 +81,9 @@ const actions = {
 			return err;
 		});
     },
-    async deleteComment({ commit, rootState }, payload) {
+    async deleteComment({ commit, rootGetters }, payload) {
         // api call
-        // commit('DELETE_COMMENTS', comment.id);
-        return commentsApi.deleteComment(rootState.idToken, payload.id)
+        return commentsApi.deleteComment(rootGetters.idToken, payload.id)
 		.then(res => {
 			// fix best case
 			commit('DELETE_COMMENT', payload);
@@ -156,6 +92,23 @@ const actions = {
 		.catch( err => {
 			return err;
 		});
+    },
+    async addReply({ commit, rootGetters }, payload) {
+        // api call
+        return commentsApi.addReply(rootGetters.idToken, payload)
+		.then(res => {
+            // fix best case
+			commit('ADD_REPLY', payload);
+			return res;
+		})
+		.catch( err => {
+			return err;
+		});
+    },
+    async likeComment({ commit, rootGetters }, payload) {
+        // api call
+        var id = rootGetters.user.uid;
+        commit('LIKE_COMMENT', {payload, id});
     },
 };
 
@@ -177,6 +130,18 @@ const mutations = {
     },
     DELETE_COMMENT(state, payload) {
         state.comments = state.comments.filter(comment => comment.id !== payload.id);
+    },
+    ADD_REPLY(state, reply) {
+        let comment = state.comments.find(comment => comment.id === reply.comment_id);
+        if (comment) {
+            comment.replies.unshift(reply);
+        }
+    },
+    LIKE_COMMENT(state, {payload, id}) {
+        const index = state.comments.findIndex(comment => comment.id === payload.id);
+        if (index !== -1) {
+            return payload.likes.includes(id)? payload.likes.splice(payload.likes.indexOf(id), 1) : payload.likes.push(id);
+        }
     },
 };
 

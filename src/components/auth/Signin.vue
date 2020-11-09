@@ -10,6 +10,11 @@
 			<hr class="" style="background-image: -webkit-linear-gradient(left, #fee7d0, #fc8917, #fee7d0); height: 0.2rem; border: 0;">
 		</section>
 		<section>
+			<div style="color: #ff0000; display: flex; justify-content: center;">
+				<ul style="text-align: left; list-style-type: disc;"><li v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
+			</div>
+		</section>
+		<section>
 			<form class="forms">
 				<div class="form-item">
 					<label for="email" class="required">Email: </label>
@@ -57,19 +62,45 @@ export default {
 		return {
 			forgotPassword: false,
 			loading: false,
-			errors: '',
+			validations: [],
 			user: {
 				email: '',
 				password: ''
 			}
 		}
 	},
+    watch: {
+        message: {
+			handler() {
+				this.notification();
+			}
+		},
+    },
 	computed:{
 	},
 	methods: {
 		...mapActions(['getGroups', 'getProjects', 'getBookmarks', 'getNotifications']),
 		resetPassword() {
 			this.forgotPassword = false;
+		},
+		validate() {
+			// Empty Errors container
+			this.validations = []; 
+			// Check If Email Is Empty
+			if (!this.user.email) {
+				this.validations.push("Email is required!!");
+			}
+			// Check If Password Is Empty
+			if (!this.user.password) {
+				this.validations.push("Password is required!");
+			}
+			// Clear error messages on the page
+			setTimeout(() => this.validations = [], 5000);
+			// If No Errors Return True
+			if (this.validations.length) {
+				return false;
+			}
+			return true;
 		},
 		onFocus(event) {
 			// event.target.style.background = 'pink';
@@ -80,12 +111,14 @@ export default {
 		},
 		onBlur(event) {
 			if (event.target.value) {
+				event.target.parentElement.style.border = 'none';
 				event.target.style.backgroundColor = '#FFFFFF';
 				// event.target.style.borderBottom = "none";
 				event.target.previousElementSibling.style.top = '0.2rem';
 				event.target.previousElementSibling.style.fontSize = '0.5rem';
 				event.target.previousElementSibling.style.marginTop = '0rem';
 			} else {
+				event.target.parentElement.style.border = '1px solid #ff0000';
 				event.target.style.backgroundColor = '';
 				event.target.style.borderBottom = "1px solid #000000";
 				event.target.previousElementSibling.style.top = '0rem';
@@ -102,7 +135,21 @@ export default {
 				temp.type = "password"; 
 			} 
 		},
+		notification() {
+			if (this.message != '') {
+				this.status = this.message;
+				this.callFunction();
+				this.$store.dispatch('getMessage', '');
+			}
+		},
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
+        },
 		async onSignIn () {
+			let validate = this.validate();
+			if (!validate) {
+				return;
+			}
 			this.loading = true
 			await this.$store.dispatch('signIn',{
 				email: this.user.email,
@@ -153,7 +200,7 @@ export default {
 	display: inline-block;
 	padding: 1rem;
 	margin-bottom: 1rem;
-	/* border: 1px solid #555; */
+	border: 1px solid #fff;
 	border-radius: 5px;
 	width: 100%;
 	position: relative;

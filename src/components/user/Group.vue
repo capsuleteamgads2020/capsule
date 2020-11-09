@@ -1,7 +1,12 @@
 <template>
     <div class="group--container">
+        <transition name="fade">
+			<div v-if="loading" class="loading">
+				<Loader class="loader" :loading="loading"></Loader>
+			</div>
+		</transition>
         <!-- <div> -->
-        <section v-if="isAdmin" class="group--create">
+        <section v-if="isAdmin && !create" class="group--create">
             <div class="group--create--button">
                 <button type="button" class="group--btn" @click="enterCreate">Create Group</button>
             </div>
@@ -29,6 +34,10 @@
                     <div class="form--item">
                         <label for="description" class="label required">Group Description: </label>
                         <textarea class="group--description" name="description" id="description" v-model.trim="group.description" @keyup="textAreaAdjust($event)" ref="description" :maxlength="limit" @focus="onWrite($event)" placeholder="Group description"></textarea>
+                    </div>
+                    <div class="form--item" style="text-align: left;">
+                        <label for="keywords" class="label required">Keyword: </label>
+                        <MultiSelect @keyword="keyword" :name=group.name></MultiSelect>
                     </div>
                     <div class="group--title">
                         <h3 class="">Partner Organisation</h3>
@@ -136,18 +145,25 @@
 
 <script>
 // @ is an alias to /src
+import MultiSelect from '@/components/partials/MultiSelect.vue'
+import Loader from '@/components/partials/Loader.vue'
 import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
-	name: 'Group',
+    name: 'Group',
+    components: {
+        MultiSelect,
+        Loader,
+    },
     data() {
         return {
-            // filteredGroups: [],
+            loading: false,
             create: false,
             limit: 280,
             group: {
                 name: '',
                 description: '',
+                keywords: [],
                 active: true,
             },
             partners: [
@@ -159,14 +175,6 @@ export default {
             ],
         }
     },
-    watch: {
-        // groups: {
-        //     handler(){
-        //         this.$emit('group', this.groups.filter(group => group).length);
-        //     },
-        //     deep: true
-        // },
-    },
     computed: {
         ...mapGetters(['groups', 'isAdmin', 'isUser', 'user', 'userInfo']),
         filteredGroups() {
@@ -174,14 +182,13 @@ export default {
         },
     },
     mounted() {
-        // this.$emit('group', this.groups.filter(group => group).length);
     },
     methods: {
-		callFunction: function () {
-            var v = this;
-            setTimeout(function () {
-				v.status = '';
-            }, 10000);
+		keyword(val) {
+			this.group.keywords = val;
+		},
+		callFunction() {
+			setTimeout(() => this.status = '', 10000);
         },
         enterCreate() {
             this.create = true;
@@ -236,6 +243,7 @@ export default {
             this.$store.dispatch('addGroup', {
                 name: this.group.name,
                 description: this.group.description,
+                keywords: this.group.keywords,
                 active: this.group.active,
                 partners: this.partners,
                 created_at: Date.now(),
@@ -243,7 +251,10 @@ export default {
             .then(() => {
                 this.group = {};
                 this.partners = [{}];
-                return;
+                this.create = !this.create;
+                // this.$emit('subscription', false);
+                // window.location.reload();
+                // return;
             })
             .catch(err => {
                 return err;
@@ -259,6 +270,7 @@ export default {
             if (!this.userInfo.groups.includes(group.id)) {
                 return;
             }
+            this.loading = true;
             var leaveGroup = firebase.functions().httpsCallable('leaveGroup');
             leaveGroup({id: group.id, name: group.name, user_id: this.user.uid})
             .then((res) => {
@@ -270,6 +282,7 @@ export default {
                     this.status = this.message;
                     this.callFunction();
                 }
+                this.loading = false;
             })
             .catch((error) => {
                 this.$store.dispatch('getMessage', error.message);
@@ -522,11 +535,13 @@ input:-internal-autofill-selected {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    padding: 0.2rem;
+    padding: 0.5rem;
 }
 .btn:hover {
     /* background-color: #FFFFFF;
     color: #DFAB24; */
     opacity: .5;
 }
+
+
 </style>
