@@ -32,7 +32,8 @@ router.get('/fetchAll', async (req, res, next) => {
             group.description = doc.data().description;
             group.update_at = doc.data().update_at;
             group.created_at = doc.data().created_at;
-            group.active = doc.data().active;        
+            group.active = doc.data().active;
+            group.keywords = doc.data().keywords;
             group.members = doc.data().members.length;
             group.projects = doc.data().projects.length;
             group.rating = rating;
@@ -62,6 +63,7 @@ router.post('/addOne', checkIfIsAdmin, async (req, res, next) => {
         partners: req.body.partners,
         created_at: req.body.created_at,
         active: req.body.active,
+        keywords: req.body.keywords,
         members: req.body.members,
         projects: [],
         rating: [],

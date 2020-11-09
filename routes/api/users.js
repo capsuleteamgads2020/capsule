@@ -132,6 +132,7 @@ router.get('/fetchOne/:id', checkIfIsUser, async (req, res) => {
         user.imageUrl = doc.data().imageUrl;
         user.created_at = doc.data().created_at;
         user.updated_at = doc.data().updated_at;
+        user.keywords = doc.data().keywords;
         user.projects = doc.data().projects;
         user.groups = doc.data().groups;
         user.notifications = notifications;

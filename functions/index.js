@@ -48,8 +48,19 @@ exports.addUser = functions.firestore.document('users/{userId}')
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 exports.joinGroup = functions.https.onCall(async (data, context) => {
     // ...
-    return admin.firestore().collection('users').doc(context.auth.uid).update({
+    // const user = await admin.firestore().collection('users').doc(context.auth.uid).get();
+    return await admin.firestore().collection('users').doc(context.auth.uid).update({
         groups: admin.firestore.FieldValue.arrayUnion(data.id),
+    })
+    .then(async () => {
+        const group = await admin.firestore().collection('groups').doc(data.id).get();
+        const keywords = group.data().keywords;
+        keywords.forEach(async keyword => {
+            await admin.firestore().collection('users').doc(context.auth.uid).update({
+                keywords: admin.firestore.FieldValue.arrayUnion(keyword),
+            });
+        });
+        return;
     })
     .then(async () => {
         return await admin.firestore().collection('groups').doc(data.id).update({
@@ -85,9 +96,19 @@ exports.joinGroup = functions.https.onCall(async (data, context) => {
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 exports.leaveGroup = functions.https.onCall(async (data, context) => {
     // ...
-    // this.userInfo.groups.splice(this.userInfo.groups.findIndex(grp => grp.id === group.id), 1);
-    return admin.firestore().collection('users').doc(context.auth.uid).update({
+    // const user = await admin.firestore().collection('users').doc(context.auth.uid).get();
+    return await admin.firestore().collection('users').doc(context.auth.uid).update({
         groups: admin.firestore.FieldValue.arrayRemove(data.id),
+    })
+    .then(async () => {
+        const group = await admin.firestore().collection('groups').doc(data.id).get();
+        const keywords = group.data().keywords;
+        keywords.forEach(async keyword => {
+            await admin.firestore().collection('users').doc(context.auth.uid).update({
+                keywords: admin.firestore.FieldValue.arrayRemove(keyword),
+            });
+        });
+        return;
     })
     .then(async () => {
         return await admin.firestore().collection('groups').doc(data.id).update({
@@ -196,9 +217,53 @@ exports.addProject = functions.firestore.document('projects/{projectId}')
         });
     }
 );
-// [END ADD PROJECT ]
+// [END ADD PROJECT]
 
+/**
+ * [START LIKE COMMENT]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
+// Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
+exports.likeComment = functions.https.onCall(async (data, context) => {
+    // ...
+    return admin.firestore().collection('comments').doc(data.id).update({
+        likes: admin.firestore.FieldValue.arrayUnion(data.user_id),
+    })
+    .then(() => {
+        return {message: `You liked a comment!`}
+    })
+    .catch(() => {
+        // return err;
+        throw new functions.https.HttpsError(`Unable to join ${data.name} project! Try again later`);
+    })
+});
+// [END LIKE COMMENT]
 
+/**
+ * [START UNLIKE COMMENT]
+ * Detect when new readings are posted,
+ * use the functions.firestore.document().onCreate Cloud Functions 
+ * to trigger code when a new object is created at a given path of the Cloud Firestore.
+ * Use addUsers function to questions with users.:
+ */
+// Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
+exports.unlikeComment = functions.https.onCall(async (data, context) => {
+    // ...
+    return admin.firestore().collection('comments').doc(data.id).update({
+        likes: admin.firestore.FieldValue.arrayRemove(data.user_id),
+    })
+    .then(() => {
+        return {message: `You unliked a comment!`}
+    })
+    .catch(() => {
+        // return err;
+        throw new functions.https.HttpsError(`Unable to join ${data.name} project! Try again later`);
+    })
+});
+// [END UNLIKE COMMENT]
 
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
 // exports.projectSubscription = functions.https.onCall((data, context) => {

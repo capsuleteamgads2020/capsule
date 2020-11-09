@@ -3,6 +3,7 @@
 const admin = require('firebase-admin');
 const express = require('express');
 const { checkIfAuthenticated, checkIfIsAdmin, checkIfIsUser }  = require('../../lib/auth');
+const { sendUploadToGCS, sendUploadsToGCS, multer, getPublicUrl } = require('../../lib/files');
 let FieldValue = require('firebase-admin').firestore.FieldValue;
 const router = express.Router();
 
@@ -15,7 +16,9 @@ const router = express.Router();
  */
 router.get('/fetchAll/:id', checkIfIsUser, async (req, res, next) => {
     const user = await admin.firestore().collection('users').doc(req.params.id).get();
-    await admin.firestore().collection('comments').where('groups', 'array-contains-any', user.data().groups).get()
+    // const keywords = user.data().keywords;
+    // const keywords = ['cancer'];
+    await admin.firestore().collection('comments').where('keywords', 'array-contains-any', user.data().keywords).get()
     .then(snapshot => {
         if (snapshot.empty) {
             res.send(`No query data received from database!`);
@@ -23,9 +26,8 @@ router.get('/fetchAll/:id', checkIfIsUser, async (req, res, next) => {
         }
         const comments = [];
         snapshot.forEach(doc => {
-
             let comment = doc.data();
-            comment.id = doc.data().id;
+            comment.id = doc.id;
             comments.push(comment);
         })
         res.status(200).json(comments)
@@ -46,12 +48,10 @@ router.get('/fetchAll/:id', checkIfIsUser, async (req, res, next) => {
  */
 router.post('/addOne/', checkIfIsUser, async (req, res, next) => {
     // Add comment data to firestore
-    await admin.firestore().collection('comments').add({
-        comment: req.body.comment,
-    })
+    await admin.firestore().collection('comments').add(req.body)
     .then((comment) => {
         // See the UserRecord reference doc for the contents of commentRecord.
-        console.log('Successfully created new comment:', comment);
+        console.log('Successfully created new comment:', comment.id);
         res.status(200).send(`Project added successfully to database`);
     })
     .catch((err) => {
@@ -60,6 +60,68 @@ router.post('/addOne/', checkIfIsUser, async (req, res, next) => {
     });
 });
 // [END POST COMMENT]
+
+/**
+ * [START POST REPLY]
+ * @param {object} req Cloud Function request context.
+ * @param {object} req.body The Datastore kind of the data to save.
+ * @param {object} res Cloud Function response context.
+ * Create a new comment.
+ */
+router.post('/addReply/', checkIfIsUser, async (req, res, next) => {
+    // Add reply data to firestore
+    await admin.firestore().collection('comments').doc(req.body.comment_id).update({
+        replies: admin.firestore.FieldValue.arrayUnion(req.body),
+    })
+    .then(() => {
+        // See the UserRecord reference doc for the contents of commentRecord.
+        res.status(200).send(`Reply added successfully to database`);
+    })
+    .catch((err) => {
+        console.log('Error adding new comment:', err);
+        res.status(500).send(`Error adding new data to database: ${err}`);
+    });
+});
+// [END POST REPLY]
+
+/**
+ * [START POST File]
+ *
+ * Create a request. If an image is uploaded, add public URL from cloud storage to firestore
+ * @param {object} req Cloud Function request context.
+ * @param {object} req.file The Datastore kind of the data to save, e.g. "Transcript".
+ * Destrcuture req.file using const {fieldname, fieldname, encoding, mimetype, buffer, size} = req.file
+ * @param {string} req.file.fieldname The Datastore kind of the data to save, e.g. "file".
+ * @param {string} req.file.originalname The Datastore kind of the data to save, e.g. "file.jpg".
+ * @param {string} req.file.encoding The Datastore kind of the data to save, e.g. "7bit".
+ * @param {string} req.file.mimetype The Datastore kind of the data to save, e.g. "image/jpg".
+ * @param {string} req.file.buffer The Datastore kind of the data to save, e.g. "<Buffer * * * ...>".
+ * @param {string} req.file.size The Datastore kind of the data to save, e.g. "104087".
+ * @param {object} res Cloud Function response context.
+ * @return {string}file  public url
+ * PS: For updating nested objects in filePublicUrl, 
+ * "dot notation" was used to reference nested fields 
+ * within the document when call update() was called
+ * Refer to this link: https://stackoverflow.com/a/54580948
+ */
+router.post('/:id/file', checkIfIsUser, multer.array('files'), sendUploadsToGCS, async (req, res) => {
+    if (!req.files) {
+        return res.status(400).send("Please choose file to upload!");
+    }
+    else {
+        const publicUrls = [];
+        req.files.forEach(file => {
+            let publicUrl = {};
+            publicUrl['originalname'] = file.originalname;
+            publicUrl['cloudStorageObject'] = file.cloudStorageObject;
+            publicUrl['cloudStoragePublicUrl'] = file.cloudStoragePublicUrl;
+            publicUrls.push(publicUrl);
+        })
+        // console.log(publicUrls);
+        res.status(200).json(publicUrls);
+    }
+});
+// [END POST File]
 
 
 /**
